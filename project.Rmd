@@ -1,0 +1,155 @@
+---
+title: "SM3_Project"
+author: "Shingyan Kwong"
+date: "May 13, 2018"
+output: html_document
+---
+
+Part A.
+
+1. 
+```{r,echo=FALSE}
+child<-read.table("Child_Height.txt",header=T)
+```
+
+
+```{r}
+pairs(~Height+Weight+Length,data=child)
+```
+
+There is evidence of a strong, positive linear relationship between  length and the two predictor variables, height and weight. The associated correlation coefficients are 0.881 and 0.894 respectively. There is also a strong, positive linear relationship between height and weight. This suggests that the two predictors may be dependent one another.
+
+2. 
+
+```{r}
+lm1<-lm(Length~Height+Weight, data=child)
+lm2<-lm(Length~Height, data=child)
+lm3<-lm(Length~Weight, data=child)
+
+```
+
+
+3. 
+
+The model assumptions which may be checked via diagnostic plots are as follows. 
+
+Linearity: Check the residuals vs fitted and the residuals vs predictor plots. Linearity is reasonable if random scatter above and below the 0 line is observed. 
+
+Constant Variance: Check scale location plot. Homoscedacity is reasonable if constant variance of residuals is observed across the scale location plot. 
+
+Normality: Check normal qq plot. Normality is reasonable if most points between -2 and 2 are on/close to the diagonal line. 
+
+4. 
+
+Full model
+
+```{r}
+par(mfrow=c(2,2))
+plot(lm1)
+```
+
+```{r}
+par(mfrow=c(1,2))
+res1<-rstudent(lm1)
+fit<-fitted(lm1)
+plot(child$Height,res1,main="Residuals vs height",pch=20)
+abline(0,0,col="red")
+plot(child$Weight,res1,main="Residuals vs weight",pch=20)
+abline(0,0,col="red")
+
+```
+
+
+Linearity: Given the small number of data points available, roughly random scatter is observed in the residual vs fitted and residual vs predictor plots. There is a couple of high residual points but it is not too bad. Linearity is reasonable. 
+
+Constant variance: Scale location plots appear to show heteroscedacity. Constant variance is not reasonable.  
+
+Normality: There is some minor departure from normality in the beginning and the tails of the standardized residuals. Overall the points are fairly close to the diagonal line. Normality is reasonable. 
+
+Leverage: There are 2 data points in the zone of danger. These high leverage points are having a disproportionate effect on the model. 
+
+Model with Weight
+
+```{r}
+par(mfrow=c(2,2))
+plot(lm2)
+```
+
+```{r}
+par(mfrow=c(1,2))
+res1<-rstudent(lm2)
+fit<-fitted(lm2)
+plot(child$Height,res1,main="Residuals vs height",pch=20)
+abline(0,0,col="red")
+plot(child$Weight,res1,main="Residuals vs weight",pch=20)
+abline(0,0,col="red")
+```
+
+
+Linearity: Non-random scatter observed in residual vs fitted and residual vs predictor plots. Linearity is not reasonable. 
+
+Constant Variance: Variance appears to increase for the middle fitted values and then decrease again. Constant variance is not reasonable. 
+
+Normality: There are several points deviating from the diagonal line on the normal qq plot. Normality is not reasonable. 
+
+Leverage: There is one point with high leverage. 
+
+```{r}
+par(mfrow=c(2,2))
+plot(lm3)
+```
+
+```{r}
+par(mfrow=c(1,2))
+res1<-rstudent(lm3)
+fit<-fitted(lm3)
+plot(child$Height,res1,main="Residuals vs height",pch=20)
+abline(0,0,col="red")
+plot(child$Weight,res1,main="Residuals vs weight",pch=20)
+abline(0,0,col="red")
+
+```
+
+Linearity: Rough random scatter in observed in residual vs fitted and residual vs predictor plots. The fitted plot shows some evidence of curvature but overall it is acceptable. Linearity is reasonable. 
+
+Constant Variance: Variance is roughly constant across the scale location plot. Constant variance is reasonable. 
+
+Normality: Most points are close to the diagonal line except 2. Normality is reasonable. 
+
+Leverage: There is one data point with high leverage. 
+
+5. 
+
+```{r}
+summary(lm1)
+```
+
+```{r}
+summary(lm2)
+
+```
+
+
+```{r}
+summary(lm3)
+
+```
+
+(a)
+
+In the full model, neither predictor variables is statistically significant (at the 0.05 level), and the numerical values of the two coefficients are both smaller than those of the single predictor models.
+
+(b)
+
+Full model:
+
+Holding height constant, the full model predicts that an increase of of 1kg will on average increase the length of the cathetar by 0.42081cm. 
+
+Weight only model:
+
+Without regard for height, this model predicts that an increase of 1kg will on average increase the cathetar length by 0.61136cm. 
+
+
+_______
+Comparing these three models, lm3 (length~weight) is better than others. From the analysis of diagnostic plots of these three models, the four assumptions in lm3 can be considered as the most reasonable. Moreover, the angle between two spaces is approximately equal to two, which means they are not orthogonal to each other. Furthermore, there exists linear relationship between the two predictor variables (height and weight) with correlation 0.961. Overall, weight as the predictor variable and length as the response variables is the most appropriate model.
+
