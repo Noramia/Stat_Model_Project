@@ -1,0 +1,79 @@
+setwd("~/Bachelor of science/Third Year/SMIII/Final Project")
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+mammo<-read.csv("mammo.txt",header=TRUE,na.strings = "?")
+help("read.csv")
+head(mammo)
+mammo<-mammo%>%select(Age,Shape,Margin,Density,Severity)
+head(mammo)
+str(mammo)
+View(mammo)
+attach(mammo)
+Shape<-as.factor(Shape)
+class(Shape)
+Margin<-as.factor(Margin)
+class(Margin)
+Density<-as.factor(Density)
+class(Density)
+Severity<-as.factor(Severity)
+class(Severity)
+class(Age)
+#/// # obtaning the logistic regression model
+glm0<-glm(Severity~Age+Shape+Margin+Density,family = 'binomial') 
+summary(glm0)
+glm1<-glm(Severity~Age+Margin+Density,family = 'binomial')
+glm1<-glm(Severity~Age+Margin+Density,family=binomial(link = "logit"))
+
+summary(glm1)
+?glm
+
+x<-model.matrix(glm0)
+head(x)
+View(x)
+table(is.na(Shape))
+#FALSE  TRUE 
+#930    31
+table(is.na(Density))
+#FALSE  TRUE 
+#885    76
+table(is.na(Age))
+#FALSE  TRUE 
+#956     5
+table(is.na(Margin))
+#FALSE  TRUE 
+#913    48
+table(is.na(Severity))
+#FALSE 
+#961
+table(is.na(mammo))
+#FALSE  TRUE 
+#5604   162
+nrow(mammo)
+#961
+
+#//// Preforming a null hypothis to check wehter Density
+#should be included in the model
+
+p<- length(coefficients(glm1))
+p #=9
+p0<-length(coefficients(glm0))
+p0 #=12
+qchisq(1-0.05,df=3)
+prob<-fitted(glm1)
+View(table(prob))
+ggplot()
+
+random.imp <- function (mammo){
+  missing <- is.na(mammo)
+  n.missing <- sum(missing)
+  a.obs <- mammo[!missing]
+  imputed <- mammo
+  imputed[missing] <- sample (a.obs, n.missing, replace=TRUE)
+  return (imputed)
+}
+mammo.imm<- random.imp (mammo)
+mammo.imm
+
+mammo
+
