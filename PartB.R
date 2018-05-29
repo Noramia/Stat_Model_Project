@@ -1,25 +1,30 @@
 setwd("C:/Users/Oliver/OneDrive/Documents/2018/Semester 1/Statistical Modelling/Project")
-mammo <- read.table("mammo.txt", header = T, sep = ',')
+
 library(broom)
 library(MASS)
+library(magrittr)
+library(dplyr)
 
 
 # ---- Data Entry and Cleaning ----
-#removing '?' values:
-table(mammo)
-mammo$BI.RADS[mammo$BI.RADS == "?"] <- NA
-mammo$Age[mammo$Age == "?"] <- NA
-mammo$Shape[mammo$Shape == '?'] <- NA
-mammo$Margin[mammo$Margin == "?"] <- NA
-mammo$Density[mammo$Density == "?"] <- NA
-mammo$Severity[mammo$Severity == "?"] <- NA
+#reading data and removing '?' values:
+mammo <- read.csv("mammo.txt", header=TRUE, na.strings = "?")
+mammo <- dplyr::select(mammo, Age, Shape, Margin, Density, Severity)
+
+
+#checking variable types and converting
+str(mammo)
+mammo$Shape <- as.factor(mammo$Shape)
+mammo$Margin <- as.factor(mammo$Margin)
+mammo$Density <- as.factor(mammo$Density)
+mammo$Severity <- as.factor(mammo$Severity)
+
 
 
 # ---- Data Visualisation and Summaries ----
 pairs(mammo)
 
-corMat <- cor(mammo)
-round(corMat, 4)
+summary(mammo)
 
 summary(mammo$BI.RADS)
 summary(mammo$Age)
@@ -30,8 +35,12 @@ summary(mammo$Severity)
 
 
 # ---- Model Fitting and Selection ----
-M1 <- lm(Severity ~ BI.RADS+Age+Shape+Margin+Density, data = mammo)
+M1 <- glm(Severity ~ Age+Shape+Margin+Density, data = mammo, family = "binomial")
 tidy(M1)
 summary(M1)
-S2 <- 0.3471^2
-step(M1, scale = S2)
+
+
+# Age, Shape and Margin are the only statistically significant predictors
+
+M2 <- glm(Severity ~ Age + Shape + Margin, data = mammo, family = "binomial")
+summary(M2)

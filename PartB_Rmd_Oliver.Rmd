@@ -1,0 +1,97 @@
+---
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("C:/Users/Oliver/OneDrive/Documents/2018/Semester 1/Statistical Modelling/Project")
+
+library(broom)
+library(MASS)
+library(magrittr)
+```
+
+# Part B
+
+
+## Introduction
+
+In this section we obtain a predictive model for mammographic mass severity, a measure of the status of mammographic mass legions, on a scale from 0 to 1, where 0 is assigned to a benign tumor, and 1 is assigned to a malignant tumor. Interest in this analysis arises from there being a low predicitve value of breast biopsy from mammograms. This low predictive value has been found to lead to approximately 70% of unnessessary biopsies of benign tumors. Analysis is performed on the dataset "mammo", containing the true status of 961 mammographic mass legions, with the response variable severity as described. Four response variables are considered:
+
+**Age** - the patient's age in years;
+
+**Shape** - a factor variable with four levels: 1 for round, 2 for oval, 3 for lobular, and 4 for irregular;
+
+**Margin** - a factor varaible with five levels: 1 for circumscribed, 2 for microlobulated, 3 for obscured, 4 for ill-defined, and 5 for spiculated;
+
+**Density** - a factor with four levels: 1 for high, 2 for iso, 3 for low, and 4 for fat-containing.
+
+
+**This introduction should probably be reworked but I this hope is a good starting point**
+
+
+##Data Entry and Cleaning
+First, we enter the data and define any values which are assigned question marks to be missing values:
+
+```{r}
+mammo <- read.csv("mammo.txt", header=TRUE, na.strings = "?")
+```
+
+We then note that BI.RADS is not a predictor variable, and remove it from our analysis:
+
+```{r}
+mammo <- dplyr::select(mammo, Age, Shape, Margin, Density, Severity)
+```
+
+We can now check the variable types for the data:
+
+```{r}
+str(mammo)
+```
+
+We note that Shape, Margin, Density and Severity should all be factor varaibles, and as such convert them:
+
+```{r}
+mammo$Shape <- as.factor(mammo$Shape)
+mammo$Margin <- as.factor(mammo$Margin)
+mammo$Density <- as.factor(mammo$Density)
+mammo$Severity <- as.factor(mammo$Severity)
+```
+
+We now see that all of the data types are correct:
+
+```{r}
+str(mammo)
+```
+
+
+## Data Visualisations and Data Summaries
+
+To visualise the data, we first produce summary statisitics for the dataset as a whole, and for each individual variable:
+
+```{r}
+summary(mammo$Age)
+summary(mammo$Shape)
+summary(mammo$Margin)
+summary(mammo$Density)
+summary(mammo$Severity)
+```
+
+We also create a pairwise scatterplot to see the relationships between indivisual varaibles:
+
+```{r, fig.cap = "Pairwise scatterplot of Mammographic Mass Severity Data"}
+pairs(mammo)
+```
+
+
+## Model Fitting and Model Selection
+
+We now fit a logistic linear model (M1) to the data, with Severity as the response variable, and Age, Shape, Margina and Density as the predictor variables:
+
+```{r}
+M1 <- glm(Severity ~ Age+Shape+Margin+Density, data = mammo, family = "binomial")
+summary(M1)
+```
+
+In this summary, we note that the only statistically significant predictors are Age, Shape and Margin... **This is where we get a bit iffy**
+
