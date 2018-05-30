@@ -22,8 +22,10 @@ class(Age)
 #/// # obtaning the logistic regression model
 glm0<-glm(Severity~Age+Shape+Margin+Density,family = 'binomial') 
 summary(glm0)
+#non of the levels in density has a statistical signifincace, therefore can be removed from the model.
 glm1<-glm(Severity~Age+Margin+Shape,family = 'binomial')
 summary(glm1)
+# There is a term with statistical significance,therefor we keep the predictor Shape, and lm1 is the reduced model
 prob<-fitted(glm1)
 View(table(prob))
 
