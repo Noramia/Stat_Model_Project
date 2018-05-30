@@ -335,15 +335,3 @@ asm.glm <- glm(Severity ~ Age+Shape+Margin, data = mammo, family = "binomial")
 summary(asm.glm)
 ```
 
-We conduct an log-likelihood ratio test comparing asm.glm and full.glm.
-
-G2=deviance(asm)-deviance(full)
-
-```{r}
-G<-773.89-726.96
-G
-```
-
-df=p-p_o
-
-G~chisq(df=)
