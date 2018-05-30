@@ -8,6 +8,7 @@ output: html_document
 library(broom)
 library(MASS)
 library(magrittr)
+setwd("C:/Users/Oliver/Documents/GitHub/Stat_Model_Project")
 ```
 
 
@@ -161,7 +162,7 @@ Without regard for height, this model predicts that an increase of 1kg will on a
 
 #6
 
-(a) We construct the model matrices for the height only and weight only models. 
+###(a) We construct the model matrices for the height only and weight only models. 
 
 ```{r,echo=FALSE}
 lm2 <- lm(Length ~ Height, data = child)
@@ -172,25 +173,28 @@ M2
 M3
 ```
 
-L_1 is the space spanned by the columns of M2. 
-L_2 is the space spanned by the columns of M3. 
+Here, we define $\mathbf{1} := (1,1,1,1,1,1,1,1,1,1,1,1)$, the vector of intercepts for both models. We also denote the vector of height values by $\mathbf{x}_1$ and the vector of weight values by $\mathbf{x}_2$. Then we find that:
 
-The intersection of the two subspaces is the intercept column. 
+$\mathcal{L}_1$ is the space spanned by the columns of M2, that is $\mathcal{L}_1 = span \{ \mathbf{1}, \mathbf{x}_1 \}$
 
-$$L_1 \cap L2 = span {(1,1,1,1,1,1,1,1,1,1,1,1) }.$$
+$\mathcal{L}_2$ is the space spanned by the columns of M3, that is $\mathcal{L}_2 = span \{ \mathbf{1}, \mathbf{x}_2 \}$
 
-(b) WARNING: INCOMPLETE
+Then, the intersection of the two subspaces is the intercept column, that is $\mathcal{L}_1 \cap \mathcal{L}_2 = span { \{\mathbf{1} \} }.$
 
-We find an orthogonal basis for L_1 and L_2 by applying the Gram-Schmidt process (without the normalizing step). 
+###(b)
+
+We note that $(\mathcal{L}_1 \cap \mathcal{L}_2)^{\perp}$ is the subspace of all vectors orthogonal to $\mathbf{1}$. Then, in order to find the intersections of $\mathcal{L}_1$ and $\mathcal{L}_2$ with $(\mathcal{L}_1 \cap \mathcal{L}_2)^{\perp}$, we first find orthonormal bases for $\mathcal{L}_1$ and $\mathcal{L}_2$.
+
+We achive this by applying the Gram-Schmidt process. First, we define the basis vectors for both subspaces, and a function norm_vec to find the norm of a vector: 
 
 ```{r}
-## Gram Schmidt:
 one <- c(1,1,1,1,1,1,1,1,1,1,1,1) # intercept vector
 x1 <- M2[,2] # vector of height values
 x2 <- M3[,2] # vector of weight values
 norm_vec <- function(x) sqrt(as.numeric(t(x) %*% x))
 ```
 
+Next, we find an orthonormal basis for $\mathcal{L}_1$:
 
 ```{r}
 v1 <- one / norm_vec(one)
@@ -198,8 +202,9 @@ v2_ <- x1 - as.numeric((t(x1) %*% v1)) * v1
 v2 <- v2_ / norm_vec(v2_)
 ```
 
+Then $\mathcal{L}_1 = span \{\mathbf{v}1, \mathbf{v}2\}$.
 
-then L_1 = {v1, v2} 
+Now, an orthonormal basis for $\mathcal{L}_2$:
 
 ```{r}
 w1 <- one / norm_vec(one)
@@ -207,16 +212,29 @@ w2_ <- x2 - as.numeric((t(x2) %*% w1)) * w1
 w2 <- w2_ / norm_vec(w2_)
 ```
 
+Then $\mathcal{L}_2 = span \{\mathbf{w}1, \mathbf{w}2\}$.
 
-# then L_2 = {w1, w2}
+Now, we have that $\mathbf{v}_1 = \mathbf{w}_1$ is parallel to $\mathbf{1}$, and that $\mathbf{v}_2$ and $\mathbf{w}_2$ are orthogonal to $\mathbf{1}$, that is, $\mathbf{v}_2, \mathbf{w}_2 \in ({\mathcal{L}_1 \cap \mathcal{L}_2})^{\perp}$.
+
+As a result, we find that:
+
+$$ \mathcal{L}_1 \cap ({\mathcal{L}_1 \cap \mathcal{L}_2})^{\perp} = span \{ \mathbf{v}_2 \}; $$
+
+$$ \mathcal{L}_2 \cap ({\mathcal{L}_1 \cap \mathcal{L}_2})^{\perp} = span \{ \mathbf{w}_2 \}. $$
 
 
-$$ L_1 \cap ({L_1 \cap L_2})^{perp} : $$
-$$ L_2 \cap ({L_1 \cap L_2})^{perp} :$$
 
-(c)
+###(c)
 
-We compute the angle between the two spaces in (b) as follows. 
+Given that both $\mathcal{L}_1 \cap ({\mathcal{L}_1 \cap \mathcal{L}_2})^{\perp}$ and $\mathcal{L}_2 \cap ({\mathcal{L}_1 \cap \mathcal{L}_2})^{\perp}$ are one-dimensional subspace, we can compute the angle between them using the relation:
+
+$$
+\cos \theta = \frac{ \langle \mathbf{u}, \mathbf{v} \rangle }{||\mathbf{u}|| \; ||\mathbf{v}||}
+$$
+
+Where $\mathbf{u}$ and $\mathbf{v}$ are two vectors and $\theta$ is the angle between them.
+
+We compute the angle between the two spaces in **(b)** as follows:
 
 ```{r}
 dot <- t(v2) %*% (w2)
@@ -224,17 +242,15 @@ norm_v2 <- norm_vec(v2)
 norm_w2 <- norm_vec(w2)
 theta <- acos(dot/(norm_v2 * norm_w2))
 theta
-theta_deg <- theta * 180/pi
 ```
 
-The angle is not pi indicating that the two spaces are NOT orthogonal. This suggests that height and weight are NOT independent. In fact they are fairly correlated. 
+The angle is not $\pi$ indicating that the two spaces are not orthogonal. This suggests that height and weight are not independent. In fact they are fairly correlated. 
 
 #7
 
 Picking a model. 
 
 _______
-#6. Linear spaces. Anthony will rewrite this later
 
 Comparing these three models, lm3 (length~weight) is better than others. From the analysis of diagnostic plots of these three models, the four assumptions in lm3 can be considered as the most reasonable. Moreover, the angle between two spaces is approximately equal to two, which means they are not orthogonal to each other. Furthermore, there exists linear relationship between the two predictor variables (height and weight) with correlation 0.961. Overall, weight as the predictor variable and length as the response variables is the most appropriate model.
 
