@@ -317,17 +317,33 @@ We also create a pairwise scatterplot to observe the relationships between indiv
 pairs(mammo)
 ```
 
-There appears to be a weak,possibly linear, positive relationship between Age and Severity. 
+There appears to be a weak,possibly linear, positive relationship between Age and Severity. There are no observable relationships between Severity and the other predictors. 
 
 ## Model Fitting and Model Selection
 
-We now fit a logistic linear model (M1) to the data, with Severity as the response variable, and Age, Shape, Margina and Density as the predictor variables:
+We now fit a logistic linear model (M1) to the data, with Severity as the response variable, and Age, Shape, Margin and Density as the predictor variables:
 
 ```{r}
-M1 <- glm(Severity ~ Age+Shape+Margin+Density, data = mammo, family = "binomial")
-summary(M1)
+full.glm <- glm(Severity ~ Age+Shape+Margin+Density, data = mammo, family = "binomial")
+summary(full.glm)
 ```
 
-In this summary, we note that the only statistically significant predictors are Age, Shape and Margin... **This is where we get a bit iffy**
+The p-values for all levels of Density are above 0.05, indicating that it is not statistically significant at the 0.05 level. This suggests that removing Density may lead to a more parsimonious model. We first construct the model without Density (asm.glm).
 
+```{r}
+asm.glm <- glm(Severity ~ Age+Shape+Margin, data = mammo, family = "binomial")
+summary(asm.glm)
+```
 
+We conduct an log-likelihood ratio test comparing asm.glm and full.glm.
+
+G2=deviance(asm)-deviance(full)
+
+```{r}
+G<-773.89-726.96
+G
+```
+
+df=p-p_o
+
+G~chisq(df=)
