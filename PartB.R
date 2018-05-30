@@ -40,22 +40,27 @@ tidy(M1)
 summary(M1)
 
 
-# Age, Shape and Margin are the only statistically significant predictors
-
 M2 <- glm(Severity ~ Age + Shape + Margin, data = mammo, family = "binomial")
 summary(M2)
+
 
 M3 <- glm(Severity ~ (Age + Shape + Margin + Density)^2, data = mammo, family = "binomial")
 summary(M3)
 
-summary(glm(Severity ~ (Age + Shape + Margin + Density)^2, data = mammo, family = "binomial"))
 
-
-M4 <- glm(Severity ~ Age + Shape + Margin + Age + Age : Shape + Age : Margin, data = mammo, family = "binomial")
+M4 <- glm(Severity ~ Age + Shape + Margin + Age : Shape + Age : Margin, data = mammo, family = "binomial")
 summary(M4)
+
 
 T1 <- glm(Severity ~ (Age + Shape + Margin + Density)^2, data = mammo, family = "binomial")
 summary(T1)
+
+
+T2 <- glm(Severity ~ (Age + Shape + Margin)^2, data = mammo, family = "binomial")
+
+
+# Below, I go through and do the normal backwards selection with the F test, and find a parsimonious model to be
+# Severity ~ Age + Shape + Margin + Shape : Margin
 
 back.glm <- T1
 
@@ -63,3 +68,25 @@ drop1(back.glm, test = "F")
 back.glm <- update(back.glm, .~. - Margin:Density)
 
 drop1(back.glm, test = "F")
+back.glm <- update(back.glm, .~. - Shape:Density)
+
+drop1(back.glm, test = "F")
+back.glm <- update(back.glm, .~. - Age:Margin)
+
+drop1(back.glm, test = "F")
+back.glm <- update(back.glm, .~. - Age:Shape)
+
+drop1(back.glm, test = "F")
+back.glm <- update(back.glm, .~. - Age:Density)
+
+drop1(back.glm, test = "F")
+back.glm <- update(back.glm, .~. - Density)
+
+drop1(back.glm, test = "F")
+back.glm <- update(back.glm, .~. - Density)
+
+
+summary(back.glm)
+
+step(T1)
+
