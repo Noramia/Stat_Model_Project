@@ -229,6 +229,9 @@ theta_deg <- theta * 180/pi
 
 The angle is not pi indicating that the two spaces are NOT orthogonal. This suggests that height and weight are NOT independent. In fact they are fairly correlated. 
 
+#7
+
+Picking a model. 
 
 _______
 #6. Linear spaces. Anthony will rewrite this later
@@ -243,7 +246,7 @@ ______
 
 ## Introduction
 
-In this section we obtain a predictive model for mammographic mass severity, a measure of the status of mammographic mass legions, on a scale from 0 to 1, where 0 is assigned to a benign tumor, and 1 is assigned to a malignant tumor. Interest in this analysis arises from there being a low predicitve value of breast biopsy from mammograms. This low predictive value has been found to lead to approximately 70% of unnessessary biopsies of benign tumors. Analysis is performed on the dataset "mammo", containing the true status of 961 mammographic mass legions, with the response variable severity as described. Four response variables are considered:
+In this section we obtain a predictive model for mammographic mass severity, a measure of the status of mammographic mass lesions, on a scale from 0 to 1, where 0 is assigned to a benign tumor, and 1 is assigned to a malignant tumor. Interest in this analysis arises from there being a low predicitve value of breast biopsy from mammograms. This low predictive value has been found to lead to approximately 70% of unnessessary biopsies of benign tumors. Analysis is performed on the dataset "mammo", containing the true status of 961 mammographic mass lesions, with the response variable severity as described. Four response variables are considered:
 
 **Age** - the patient's age in years;
 
@@ -276,7 +279,7 @@ We can now check the variable types for the data:
 str(mammo)
 ```
 
-We note that Shape, Margin, Density and Severity should all be factor varaibles, and as such convert them:
+We note that Shape, Margin, Density and Severity should all be factor variables, and as such convert them:
 
 ```{r}
 mammo$Shape <- as.factor(mammo$Shape)
@@ -298,18 +301,23 @@ To visualise the data, we first produce summary statisitics for the dataset as a
 
 ```{r}
 summary(mammo$Age)
+print(" ")
 summary(mammo$Shape)
+print(" ")
 summary(mammo$Margin)
+print(" ")
 summary(mammo$Density)
+print(" ")
 summary(mammo$Severity)
 ```
 
-We also create a pairwise scatterplot to see the relationships between indivisual varaibles:
+We also create a pairwise scatterplot to observe the relationships between indivisual variables:
 
 ```{r, fig.cap = "Pairwise scatterplot of Mammographic Mass Severity Data"}
 pairs(mammo)
 ```
 
+There appears to be a weak,possibly linear, positive relationship between Age and Severity. 
 
 ## Model Fitting and Model Selection
 
