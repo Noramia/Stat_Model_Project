@@ -2,7 +2,10 @@
 title: "SM3_Project"
 author: "Shingyan Kwong"
 date: "May 13, 2018"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
 ---
 ```{r,echo=FALSE}
 library(broom)
@@ -77,7 +80,7 @@ Normality: There is some minor departure from normality in the beginning and the
 
 Leverage: There are 2 data points in the zone of danger. These high leverage points are having a disproportionate effect on the model. 
 
-#Model with Weight only
+#Model with Height only
 
 ```{r}
 par(mfrow=c(2,2))
@@ -103,7 +106,7 @@ Normality: There are several points deviating from the diagonal line on the norm
 
 Leverage: There is one point with high leverage. 
 
-#Model with Height only
+#Model with Weight only
 
 ```{r}
 par(mfrow=c(2,2))
@@ -131,16 +134,19 @@ Leverage: There is one data point with high leverage.
 
 #5. Comparison of the three models
 
+Full Model:
 ```{r}
 summary(lm1)
 ```
+
+Height Model:
 
 ```{r}
 summary(lm2)
 
 ```
 
-
+Weight Model:
 ```{r}
 summary(lm3)
 
