@@ -159,6 +159,76 @@ Weight only model:
 
 Without regard for height, this model predicts that an increase of 1kg will on average increase the cathetar length by 0.61136cm. 
 
+#6
+
+(a) We construct the model matrices for the height only and weight only models. 
+
+```{r,echo=FALSE}
+lm2 <- lm(Length ~ Height, data = child)
+lm3 <- lm(Length ~ Weight, data = child)
+M2 <- model.matrix(lm2)
+M3 <-  model.matrix(lm3)
+M2
+M3
+```
+
+L_1 is the space spanned by the columns of M2. 
+L_2 is the space spanned by the columns of M3. 
+
+The intersection of the two subspaces is the intercept column. 
+
+$$L_1 \cap L2 = span {(1,1,1,1,1,1,1,1,1,1,1,1) }.$$
+
+(b) WARNING: INCOMPLETE
+
+We find an orthogonal basis for L_1 and L_2 by applying the Gram-Schmidt process (without the normalizing step). 
+
+```{r}
+## Gram Schmidt:
+one <- c(1,1,1,1,1,1,1,1,1,1,1,1) # intercept vector
+x1 <- M2[,2] # vector of height values
+x2 <- M3[,2] # vector of weight values
+norm_vec <- function(x) sqrt(as.numeric(t(x) %*% x))
+```
+
+
+```{r}
+v1 <- one / norm_vec(one)
+v2_ <- x1 - as.numeric((t(x1) %*% v1)) * v1
+v2 <- v2_ / norm_vec(v2_)
+```
+
+
+then L_1 = {v1, v2} 
+
+```{r}
+w1 <- one / norm_vec(one)
+w2_ <- x2 - as.numeric((t(x2) %*% w1)) * w1
+w2 <- w2_ / norm_vec(w2_)
+```
+
+
+# then L_2 = {w1, w2}
+
+
+$$ L_1 \cap ({L_1 \cap L_2})^{perp} : $$
+$$ L_2 \cap ({L_1 \cap L_2})^{perp} :$$
+
+(c)
+
+We compute the angle between the two spaces in (b) as follows. 
+
+```{r}
+dot <- t(v2) %*% (w2)
+norm_v2 <- norm_vec(v2)
+norm_w2 <- norm_vec(w2)
+theta <- acos(dot/(norm_v2 * norm_w2))
+theta
+theta_deg <- theta * 180/pi
+```
+
+The angle is not pi indicating that the two spaces are NOT orthogonal. This suggests that height and weight are NOT independent. In fact they are fairly correlated. 
+
 
 _______
 #6. Linear spaces. Anthony will rewrite this later
