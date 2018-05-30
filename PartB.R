@@ -35,38 +35,25 @@ summary(mammo$Severity)
 
 
 # ---- Model Fitting and Selection ----
-M1 <- glm(Severity ~ Age*Shape*Margin*Density, data = mammo, family = "binomial")
-tidy(M1)
-summary(M1)
 
-
-M2 <- glm(Severity ~ Age + Shape + Margin, data = mammo, family = "binomial")
+M1 <- glm(Severity ~ Age + Shape + Margin, data = mammo, family = "binomial")
 summary(M2)
 
 
-M3 <- glm(Severity ~ (Age + Shape + Margin + Density)^2, data = mammo, family = "binomial")
-summary(M3)
-
-
-M4 <- glm(Severity ~ Age + Shape + Margin + Age : Shape + Age : Margin, data = mammo, family = "binomial")
-summary(M4)
-
-
-T1 <- glm(Severity ~ (Age + Shape + Margin + Density)^2, data = mammo, family = "binomial")
-summary(T1)
-
-
-T2 <- glm(Severity ~ (Age + Shape + Margin)^2, data = mammo, family = "binomial")
 
 
 # Below, I go through and do the normal backwards selection with the F test, and find a parsimonious model to be
 # Severity ~ Age + Shape + Margin + Shape : Margin
 
+
+# backwards selection via F-test with full model of all two way inrteractions ???
+
+
 back.glm <- T1
 
 drop1(back.glm, test = "F")
 back.glm <- update(back.glm, .~. - Margin:Density)
-
+    
 drop1(back.glm, test = "F")
 back.glm <- update(back.glm, .~. - Shape:Density)
 
@@ -83,10 +70,35 @@ drop1(back.glm, test = "F")
 back.glm <- update(back.glm, .~. - Density)
 
 drop1(back.glm, test = "F")
-back.glm <- update(back.glm, .~. - Density)
 
 
 summary(back.glm)
 
-step(T1)
 
+# After model selection all terms significant (F - test) but from summary, not all terms significant (z - test) ???
+
+#Justification = parsimony????
+
+
+
+probs <- fitted(back.glm)
+
+
+length(probs)
+summary(probs)
+probs
+
+mammo_no_NA <- na.omit(mammo)
+
+
+# why is it that we don't have 961 values in the fitted probabilities?
+# if because NA aren't included, why don't we only have 831, but 887 instead?
+
+
+
+predict(back.glm,data.frame(Age=50,Shape="3",Margin="2",Density="1"))
+
+predict(back.glm,data.frame(Age=62,Shape="3",Margin="3", Density="1"))
+
+
+# why is this giving values outside of our bounds and not the same as the fitted?
