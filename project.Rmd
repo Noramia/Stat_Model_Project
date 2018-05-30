@@ -4,10 +4,17 @@ author: "Shingyan Kwong"
 date: "May 13, 2018"
 output: html_document
 ---
+```{r,echo=FALSE}
+library(broom)
+library(MASS)
+library(magrittr)
+```
 
-Part A.
 
-1. 
+
+#Part A.
+
+#1. 
 ```{r,echo=FALSE}
 child<-read.table("Child_Height.txt",header=T)
 ```
@@ -19,7 +26,8 @@ pairs(~Height+Weight+Length,data=child)
 
 There is evidence of a strong, positive linear relationship between  length and the two predictor variables, height and weight. The associated correlation coefficients are 0.881 and 0.894 respectively. There is also a strong, positive linear relationship between height and weight. This suggests that the two predictors may be dependent one another.
 
-2. 
+
+#2. 
 
 ```{r}
 lm1<-lm(Length~Height+Weight, data=child)
@@ -29,7 +37,7 @@ lm3<-lm(Length~Weight, data=child)
 ```
 
 
-3. 
+#3. 
 
 The model assumptions which may be checked via diagnostic plots are as follows. 
 
@@ -39,9 +47,9 @@ Constant Variance: Check scale location plot. Homoscedacity is reasonable if con
 
 Normality: Check normal qq plot. Normality is reasonable if most points between -2 and 2 are on/close to the diagonal line. 
 
-4. 
+#4. 
 
-Full model
+#Full model
 
 ```{r}
 par(mfrow=c(2,2))
@@ -68,7 +76,7 @@ Normality: There is some minor departure from normality in the beginning and the
 
 Leverage: There are 2 data points in the zone of danger. These high leverage points are having a disproportionate effect on the model. 
 
-Model with Weight
+#Model with Weight only
 
 ```{r}
 par(mfrow=c(2,2))
@@ -94,6 +102,8 @@ Normality: There are several points deviating from the diagonal line on the norm
 
 Leverage: There is one point with high leverage. 
 
+#Model with Height only
+
 ```{r}
 par(mfrow=c(2,2))
 plot(lm3)
@@ -118,7 +128,7 @@ Normality: Most points are close to the diagonal line except 2. Normality is rea
 
 Leverage: There is one data point with high leverage. 
 
-5. 
+#5. Comparison of the three models
 
 ```{r}
 summary(lm1)
@@ -151,5 +161,95 @@ Without regard for height, this model predicts that an increase of 1kg will on a
 
 
 _______
+#6. Linear spaces. Anthony will rewrite this later
+
 Comparing these three models, lm3 (length~weight) is better than others. From the analysis of diagnostic plots of these three models, the four assumptions in lm3 can be considered as the most reasonable. Moreover, the angle between two spaces is approximately equal to two, which means they are not orthogonal to each other. Furthermore, there exists linear relationship between the two predictor variables (height and weight) with correlation 0.961. Overall, weight as the predictor variable and length as the response variables is the most appropriate model.
+
+______
+
+
+# Part B
+
+
+## Introduction
+
+In this section we obtain a predictive model for mammographic mass severity, a measure of the status of mammographic mass legions, on a scale from 0 to 1, where 0 is assigned to a benign tumor, and 1 is assigned to a malignant tumor. Interest in this analysis arises from there being a low predicitve value of breast biopsy from mammograms. This low predictive value has been found to lead to approximately 70% of unnessessary biopsies of benign tumors. Analysis is performed on the dataset "mammo", containing the true status of 961 mammographic mass legions, with the response variable severity as described. Four response variables are considered:
+
+**Age** - the patient's age in years;
+
+**Shape** - a factor variable with four levels: 1 for round, 2 for oval, 3 for lobular, and 4 for irregular;
+
+**Margin** - a factor varaible with five levels: 1 for circumscribed, 2 for microlobulated, 3 for obscured, 4 for ill-defined, and 5 for spiculated;
+
+**Density** - a factor with four levels: 1 for high, 2 for iso, 3 for low, and 4 for fat-containing.
+
+
+**This introduction should probably be reworked but I this hope is a good starting point**
+
+
+##Data Entry and Cleaning
+First, we enter the data and define any values which are assigned question marks to be missing values:
+
+```{r}
+mammo <- read.csv("mammo.txt", header=TRUE, na.strings = "?")
+```
+
+We then note that BI.RADS is not a predictor variable, and remove it from our analysis:
+
+```{r}
+mammo <- dplyr::select(mammo, Age, Shape, Margin, Density, Severity)
+```
+
+We can now check the variable types for the data:
+
+```{r}
+str(mammo)
+```
+
+We note that Shape, Margin, Density and Severity should all be factor varaibles, and as such convert them:
+
+```{r}
+mammo$Shape <- as.factor(mammo$Shape)
+mammo$Margin <- as.factor(mammo$Margin)
+mammo$Density <- as.factor(mammo$Density)
+mammo$Severity <- as.factor(mammo$Severity)
+```
+
+We now see that all of the data types are correct:
+
+```{r}
+str(mammo)
+```
+
+
+## Data Visualisations and Data Summaries
+
+To visualise the data, we first produce summary statisitics for the dataset as a whole, and for each individual variable:
+
+```{r}
+summary(mammo$Age)
+summary(mammo$Shape)
+summary(mammo$Margin)
+summary(mammo$Density)
+summary(mammo$Severity)
+```
+
+We also create a pairwise scatterplot to see the relationships between indivisual varaibles:
+
+```{r, fig.cap = "Pairwise scatterplot of Mammographic Mass Severity Data"}
+pairs(mammo)
+```
+
+
+## Model Fitting and Model Selection
+
+We now fit a logistic linear model (M1) to the data, with Severity as the response variable, and Age, Shape, Margina and Density as the predictor variables:
+
+```{r}
+M1 <- glm(Severity ~ Age+Shape+Margin+Density, data = mammo, family = "binomial")
+summary(M1)
+```
+
+In this summary, we note that the only statistically significant predictors are Age, Shape and Margin... **This is where we get a bit iffy**
+
 
