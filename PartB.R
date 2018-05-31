@@ -5,6 +5,18 @@ library(MASS)
 library(magrittr)
 library(dplyr)
 
+#correlation matrix
+#boxplots for all Density,Margin,Shape
+#scatterplot for age
+#summary stats for all
+
+boxplot(mammo$Age)
+hist(mammo$Age)
+table(mammo)
+
+boxplot(mammo$Age ~ mammo$Shape)
+boxplot(mammo$Age ~ mammo$Severity)
+
 
 # ---- Data Entry and Cleaning ----
 #reading data and removing '?' values:
@@ -39,7 +51,7 @@ summary(mammo$Severity)
 M1 <- glm(Severity ~ Age + Shape + Margin, data = mammo, family = "binomial")
 summary(M2)
 
-
+T1 <- glm(Severity ~ (Age + Shape + Margin + Density)^2, data = mammo, family = "binomial")
 
 
 # Below, I go through and do the normal backwards selection with the F test, and find a parsimonious model to be
@@ -48,6 +60,7 @@ summary(M2)
 
 # backwards selection via F-test with full model of all two way inrteractions ???
 
+summary(T1)
 
 back.glm <- T1
 
@@ -75,13 +88,41 @@ drop1(back.glm, test = "F")
 summary(back.glm)
 
 
+back2.glm <- T1
+
+summary(back2.glm)
+back2.glm <- update(back2.glm, .~. - Margin:Density)
+
+summary(back2.glm)
+back2.glm <- update(back2.glm, .~. - Shape:Density)
+
+summary(back2.glm)
+back2.glm <- update(back2.glm, .~. - Shape:Margin)
+
+summary(back2.glm)
+back2.glm <- update(back2.glm, .~. - Age:Margin)
+
+summary(back2.glm)
+back2.glm <- update(back2.glm, .~. - Age:Density)
+
+summary(back2.glm)
+back2.glm <- update(back2.glm, .~. - Age:Shape)
+
+summary(back2.glm)
+back2.glm <- update(back2.glm, .~. - Density)
+
+summary(back2.glm)
+
+
+FinalM <- back2.glm
+
 # After model selection all terms significant (F - test) but from summary, not all terms significant (z - test) ???
 
 #Justification = parsimony????
 
 
 
-probs <- fitted(back.glm)
+probs <- fitted(FinalM)
 
 
 length(probs)
@@ -96,9 +137,25 @@ mammo_no_NA <- na.omit(mammo)
 
 
 
-predict(back.glm,data.frame(Age=50,Shape="3",Margin="2",Density="1"))
+predict(FinalM,data.frame(Age=50,Shape="3",Margin="2",Density="1"))
 
-predict(back.glm,data.frame(Age=62,Shape="3",Margin="3", Density="1"))
+predict(FinalM,data.frame(Age=62,Shape="3",Margin="3", Density="1"))
 
+predict(FinalM,data.frame(Age=67,Shape="3",Margin="5", Density="3"), type = "response")
 
 # why is this giving values outside of our bounds and not the same as the fitted?
+
+
+plot(probs, newMammo$Age)
+boxplot(probs, newMammo$Shape)
+boxplot(probs, newMammo$Margin)
+
+hist(probs)
+
+
+newMammo <- mammo %>% select(Age, Margin, Shape, Severity)
+
+newMammo <- na.omit(newMammo)
+head(newMammo)
+
+
