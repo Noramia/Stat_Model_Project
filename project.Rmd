@@ -353,7 +353,7 @@ summary(full.glm)
 Here we note that p-values are non-existent for several of the interaction terms, as such, we begin by removing the interaction between Margin and Density, then view the summary for the updated model:
 
 ```{r}
-back.glm <- update(back.glm, .~. - Margin:Density)
+back.glm <- update(full.glm, .~. - Margin:Density)
 summary(back.glm)
 ```
 
