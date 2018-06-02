@@ -728,8 +728,252 @@ theta <- acos(inner/(norm_v2 * norm_w2))
 theta
 ```
 
+\newpage 
+
+## Part B
+
+##Data Entry and Cleaning
+First, we enter the data and define any values which are assigned question marks to be missing values:
+
+```{r}
+mammo <- read.csv("mammo.txt", header=TRUE, na.strings = "?")
+```
+
+We then note that BI.RADS is not a predictor variable, and remove it from our analysis:
+
+```{r}
+mammo <- dplyr::select(mammo, Age, Shape, Margin, Density, Severity)
+```
+
+We generate a correlation matrix to observe any relationships between the predictor variables and the response. It was necessary to omit observations with NA values. Shape and Margin were included as increases in their indices are associated with a greater risk of cancer. Density was omitted as the index is not associated with a greater risk. Thus correlation between Density and Severity would not be statistically meaningful.  
+
+```{r}
+library(corrplot)
+corMat<-cor(na.omit(dplyr::select(mammo, Age, Shape, Margin,Severity)))
+corrplot(corMat, type="upper", order="hclust",tl.col="black",tl.srt = 45 )
+```
+
+Mild positive correlation is observed between Age and the other variables. 
+
+Moderate positive correlation is observed between Severity and the other 3 predictors. 
+
+Strong positive correlation between Shape and Margin. 
 
 
+
+
+We can now check the variable types for the data:
+
+```{r}
+str(mammo)
+```
+
+We note that Shape, Margin, Density and Severity should all be factor variables, and as such convert them:
+
+```{r}
+mammo$Shape <- as.factor(mammo$Shape)
+mammo$Margin <- as.factor(mammo$Margin)
+mammo$Density <- as.factor(mammo$Density)
+mammo$Severity <- as.factor(mammo$Severity)
+```
+
+We now see that all of the data types are correct:
+
+```{r}
+str(mammo)
+```
+
+
+## Data Visualisations and Data Summaries
+
+To visualise the data, we first produce summary statisitics for the dataset as a whole, and for each individual variable:
+
+```{r}
+summary(mammo$Age)
+print(" ")
+summary(mammo$Shape)
+print(" ")
+summary(mammo$Margin)
+print(" ")
+summary(mammo$Density)
+print(" ")
+summary(mammo$Severity)
+```
+
+We also create a pairwise scatterplot to observe the relationships between individual variables:
+
+```{r, fig.cap = "Pairwise scatterplot of Mammographic Mass Severity Data"}
+pairs(mammo)
+```
+
+There appears to be a weak,possibly linear, positive relationship between Age and Severity. There are no observable relationships between Severity and the other predictors. 
+
+
+## Model Fitting and Model Selection
+
+We now fit a logistic linear model (full.glm) to the data, with Severity as the response variable, and Age, Shape, Margin and Density as the predictor variables with interaction terms up to second order:
+
+```{r, warning = F}
+full.glm <- glm(Severity ~ (Age+Shape+Margin+Density)^2, data = mammo, family = "binomial")
+summary(full.glm)
+```
+
+Here we note that p-values are non-existent for several of the interaction terms, as such, we begin by removing the interaction between Margin and Density, then view the summary for the updated model:
+
+```{r, warning = F}
+back.glm <- update(full.glm, .~. - Margin:Density)
+summary(back.glm)
+```
+
+Here we see that p-values are still non-existent for some levels of the interaction between Shape and Density, as such we remove this interaction from the model:
+
+```{r, warning = F}
+back.glm <- update(back.glm, .~. - Shape:Density)
+summary(back.glm)
+```
+
+Now we can see that all of the terms have a valid p-value, and continue our selection process by removing the least statistically signicant terms. We see that Age:Margin5 has the highest p-value of 0.9898, and no other level of Age:Margin are significant, so it is removed from the model:
+
+```{r, warning = F}
+back.glm <- update(back.glm, .~. - Age:Margin)
+summary(back.glm)
+```
+
+Now we see that the highest p-value is for Shape2:Margin3, and no other levels of the interaction between shape and margin are significant, so the interaction is removed from the model:
+
+```{r, warning = F}
+back.glm <- update(back.glm, .~. - Shape:Margin)
+summary(back.glm)
+```
+
+Here we see that of the interaction terms, Age:Density4 has the highest p-value of 0.7959, and no other levels of this interaction are significant, so the model is updated with the removal of this interaction:
+
+```{r, warning = F}
+back.glm <- update(back.glm, .~. - Age:Density)
+summary(back.glm)
+```
+
+Here we see that Age:Shape3 has the highest p-value of 0.5688, and the other levels of the interaction between Age and Shape are also non-significant, so the interaction is removed from the model:
+
+```{r, warning = F}
+back.glm <- update(back.glm, .~. - Age:Shape)
+summary(back.glm)
+```
+
+Now we note that the model has been reduced to the additive model with no interaction terms. In this model we see that the fourth level of density has the highest p-value, and no other levels are significant, so Density is removed from the model:
+
+```{r, warning = F}
+back.glm <- update(back.glm, .~. - Density)
+summary(back.glm)
+```
+
+In this model, we note that all of the terms have at least on level which is statistically significant, so no terms should be removed. We assign this model the name final.glm:
+
+```{r, warning = F}
+final.glm <- back.glm
+```
+
+## Justification of the final model
+
+The following is the proposed final model. 
+
+```{r}
+summary(final.glm)
+```
+
+This model was obtained by first starting with a saturated model with all the two way interaction terms. Statistically insiginificant terms were removed via the backwards selection algorithmn at the 0.05 significance level. Hence the final model is the most parsimonious model with all the statistically significant predictors. 
+
+## Interpretation of Parameters
+
+Intercept: A woman of Age=0 with a mammogram of Shape=1 (round), Margin=1 (circumscribed) has log-odds=-4.7195 of having a malignant tumour. 
+
+Age: Holding all other variables constant, a one year increase in age increases the log-odds of having a malignant tumour by 0.05388. 
+
+Shape: Holding all other variables constant, having a lesion of Shape=2 (oval) increases the log-odds of having a malignant tumour by -.4478 compared to Shape=1 (round). For Shape=2 (lobular), th increase is 0.4992 and for Shape=3 (irregular), the increase is 1.2428, all relative to Shape=1.  
+
+Margin: Holding all other variables constant, having a lesion of Margin=2 (microlobulated) increases the log-odds of a malignant tumour by 1.5829 comapred to Margin=1 (circumscribed). For Margin =3 (obscured) the change in log-odds is 1.2631, Margin=4 (ill-defined) 1.5432 and Margin=5 (spiculated) 2.0321, all relative to Margin=1. 
+
+
+##Predicting Probabilities and Interpretation
+
+In this section, we use our final model (final.glm) to predict the probability of a specific patient, that is, a patient with given values for each of the predictor varaibles. Given that the response variable is defined to be 0 for benign (not cancerous) and 1 for malignant (cancerous), the fitted values lie between 0 and 1 and hence predict the  probability for a given patient to have a malignant tumor.
+
+We first fit the probabilties of each datapoint in the dataset based on the final model:
+
+```{r}
+probabilities <- fitted(final.glm)
+summary(probabilities)
+```
+
+We can produce a histogram to visualise the overall distribution of probabilities:
+
+```{r, fig.cap = "Histogram of Fitted Probabilities"}
+hist(probabilities)
+```
+
+Here we note that in general, it appears that most patients are either very likely, or very unlikely to have a malignant tumor. As a result, we might expect when predicting probabilities, that is most cases the predictions will be either very high or very low.
+
+We can produce plots to visualise the probabilities for different levels of the predictor variables.
+
+We first define a modified version of the mamo data, including only Age, Shape, Margin and Severity, and ignoring the missing values in order to be able to create valid plots:
+
+```{r}
+newMammo <- mammo %>% select(Age, Margin, Shape, Severity)
+newMammo <- na.omit(newMammo)
+```
+
+
+We can now create plots of probabilities against Age, Shape and Margin:
+
+```{r, fig.cap = "Probabilities against Age"}
+plot(probabilities ~ newMammo$Age)
+```
+
+Here we see that there appears to be a weak, positive relationship between age and the probability of having a malignant tumor, and it is difficult to say whether the relationship is linear or not.
+
+```{r, fig.cap = "Probabilities against Shape"}
+boxplot(probabilities ~ newMammo$Shape)
+```
+
+Here we see that as shape tends from the round, regular shape to a more irregular one, the predicted probabilities appear to increase in general.
+
+```{r, fig.cap = "Probabilities against Margin"}
+boxplot(probabilities ~ newMammo$Margin)
+```
+
+Here we see that as the margin tends from being well-defined to ill-defined, in general, the probability of the tumor being malignant seems to increase.
+
+
+Having observed these relationships, we can now predict the probability of the tumor being malignant for a few specific patients.
+We do so for a patient at an age of 40, with Shape = 1 (round) and Margin = 1 (circumscribed). This is a patient which we would expect to have a relatively low probability, as they are quite young, and their tumor is quite regular in shape and margin.
+
+The predicted probability is given by:
+
+```{r}
+predict(final.glm,data.frame(Age=40,Shape="1",Margin="1"), type = "response")
+```
+
+This probability of 0.07147 alligns well with what we would expect. We can interpret this to mean that from a large group of patients, those with an age of 40, round tumors and circumscribed margins, approximately 7% would have malignant tumors.
+
+
+On the other end of the spectrum, we can predict the probability for a patient with an age of 80, Shape = 4 (irregular) and Margin = 5 (speculated), that is an older patient with an irregular and very much ill-defined tumor.
+
+The predicted probability is given by:
+
+```{r}
+predict(final.glm,data.frame(Age=80,Shape="4",Margin="5"), type = "response")
+```
+
+This probability of 0.9461 also aligns well with what we would expect. This means, that for a large group of patients, we would expect that for patients of age 80, with irregularly shaped tumors and a spiculated margins, that approximately 95% would have malignant tumors.
+
+
+To find what we would expect to be a more intermediate probability, we can then predict the probability for a patient with an age of 60, Shape = 2 (oval), Margin = 3 (obscured):
+
+```{r}
+predict(final.glm,data.frame(Age=60,Shape="2",Margin="3"), type = "response")
+```
+
+This probability of 0.3381 also makes sense intuitively, as the patient's age and margin values were much more intermediate, and the shape of their tumor is closer to regular end of the spectrum than the irregular end. This means, that in a large group of patients, we would expect that for patients of age 60, with oval shaped tumors and obscured margins, that approximately 34% would have malignant tumors.
 
 
 
