@@ -388,7 +388,7 @@ summary(back.glm)
 Here we see that Age:Shape3 has the highest p-value of 0.5688, and the other levels of the interaction between Age and Shape are also non-significant, so the interaction is removed from the model:
 
 ```{r}
-back2.glm <- update(back2.glm, .~. - Age:Shape)
+back.glm <- update(back.glm, .~. - Age:Shape)
 summary(back.glm)
 ```
 
