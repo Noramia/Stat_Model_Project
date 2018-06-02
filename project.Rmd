@@ -343,17 +343,65 @@ There appears to be a weak,possibly linear, positive relationship between Age an
 
 ## Model Fitting and Model Selection
 
-We now fit a logistic linear model (M1) to the data, with Severity as the response variable, and Age, Shape, Margin and Density as the predictor variables:
+We now fit a logistic linear model (M1) to the data, with Severity as the response variable, and Age, Shape, Margin and Density as the predictor variables with interaction terms up to second order:
 
 ```{r}
-full.glm <- glm(Severity ~ Age+Shape+Margin+Density, data = mammo, family = "binomial")
+full.glm <- glm(Severity ~ (Age+Shape+Margin+Density)^2, data = mammo, family = "binomial")
 summary(full.glm)
 ```
 
-The p-values for all levels of Density are above 0.05, indicating that it is not statistically significant at the 0.05 level. This suggests that removing Density may lead to a more parsimonious model. We first construct the model without Density (asm.glm).
+Here we note that p-values are non-existent for several of the interaction terms, as such, we begin by removing the interaction between Margin and Density, then view the summary for the updated model:
 
 ```{r}
-asm.glm <- glm(Severity ~ Age+Shape+Margin, data = mammo, family = "binomial")
-summary(asm.glm)
+back.glm <- update(back.glm, .~. - Margin:Density)
+summary(back.glm)
+```
+
+Here we see that p-values are still non-existent for some levels of the interaction between Shape and Density, as such we remove this interaction from the model:
+
+```{r}
+back.glm <- update(back.glm, .~. - Shape:Density)
+summary(back.glm)
+```
+
+Now we can see that all of the terms have a valid p-value, and continue our selection process by removing the least statistically signicant terms. We see that Age:Margin5 has the highest p-value of 0.9898, and no other level of Age:Margin are significant, so it is removed from the model:
+
+```{r}
+back.glm <- update(back.glm, .~. - Age:Margin)
+summary(back.glm)
+```
+
+Now we see that the highest p-value is for Shape2:Margin3, and no other levels of the interaction between shape and margin are significant, so the interaction is removed from the model:
+
+```{r}
+back.glm <- update(back.glm, .~. - Shape:Margin)
+summary(back.glm)
+```
+
+Here we see that of the interaction terms, Age:Density4 has the highest p-value of 0.7959, and no other levels of this interaction are significant, so the model is updated with the removal of this interaction:
+
+```{r}
+back.glm <- update(back.glm, .~. - Age:Density)
+summary(back.glm)
+```
+
+Here we see that Age:Shape3 has the highest p-value of 0.5688, and the other levels of the interaction between Age and Shape are also non-significant, so the interaction is removed from the model:
+
+```{r}
+back2.glm <- update(back2.glm, .~. - Age:Shape)
+summary(back.glm)
+```
+
+Now we note that the model has been reduced to the additive model with no interaction terms. In this model we see that the fourth level of density has the highest p-value, and no other levels are significant, so Density is removed from the model:
+
+```{r}
+back.glm <- update(back.glm, .~. - Density)
+summary(back.glm)
+```
+
+In this model, we note that all of the terms have at least on level which is statistically significant, so no terms should be removed. We assign this model the name final.glm:
+
+```{r}
+final.glm <- back.glm
 ```
 
