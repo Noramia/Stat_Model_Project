@@ -350,10 +350,10 @@ w2 &lt;- w2_ / norm_vec(w2_)</code></pre>
 \]</span></p>
 <p>Where <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span> are two vectors and <span class="math inline">\(\theta\)</span> is the angle between them.</p>
 <p>We compute the angle between the two spaces in <strong>(b)</strong> as follows:</p>
-<pre class="r"><code>dot &lt;- t(v2) %*% (w2)
+<pre class="r"><code>inner &lt;- t(v2) %*% (w2)
 norm_v2 &lt;- norm_vec(v2)
 norm_w2 &lt;- norm_vec(w2)
-theta &lt;- acos(dot/(norm_v2 * norm_w2))
+theta &lt;- acos(inner/(norm_v2 * norm_w2))
 theta</code></pre>
 <pre><code>##           [,1]
 ## [1,] 0.2799352</code></pre>
@@ -366,6 +366,7 @@ theta</code></pre>
 <hr />
 <p>Comparing these three models, lm3 (length~weight) is better than others. From the analysis of diagnostic plots of these three models, the four assumptions in lm3 can be considered as the most reasonable. Moreover, the angle between two spaces is approximately equal to two, which means they are not orthogonal to each other. Furthermore, there exists linear relationship between the two predictor variables (height and weight) with correlation 0.961. Overall, weight as the predictor variable and length as the response variables is the most appropriate model.</p>
 <hr />
+
 </div>
 <div id="part-b" class="section level1">
 <h1>Part B</h1>
@@ -444,11 +445,9 @@ Pairwise scatterplot of Mammographic Mass Severity Data
 </div>
 <div id="model-fitting-and-model-selection" class="section level2">
 <h2>Model Fitting and Model Selection</h2>
-<p>We now fit a logistic linear model (M1) to the data, with Severity as the response variable, and Age, Shape, Margin and Density as the predictor variables with interaction terms up to second order:</p>
-<pre class="r"><code>full.glm &lt;- glm(Severity ~ (Age+Shape+Margin+Density)^2, data = mammo, family = &quot;binomial&quot;)</code></pre>
-<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
-<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
-<pre class="r"><code>summary(full.glm)</code></pre>
+<p>We now fit a logistic linear model (full.glm) to the data, with Severity as the response variable, and Age, Shape, Margin and Density as the predictor variables with interaction terms up to second order:</p>
+<pre class="r"><code>full.glm &lt;- glm(Severity ~ (Age+Shape+Margin+Density)^2, data = mammo, family = &quot;binomial&quot;)
+summary(full.glm)</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = Severity ~ (Age + Shape + Margin + Density)^2, 
@@ -527,10 +526,8 @@ Pairwise scatterplot of Mammographic Mass Severity Data
 ## 
 ## Number of Fisher Scoring iterations: 25</code></pre>
 <p>Here we note that p-values are non-existent for several of the interaction terms, as such, we begin by removing the interaction between Margin and Density, then view the summary for the updated model:</p>
-<pre class="r"><code>back.glm &lt;- update(full.glm, .~. - Margin:Density)</code></pre>
-<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
-<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
-<pre class="r"><code>summary(back.glm)</code></pre>
+<pre class="r"><code>back.glm &lt;- update(full.glm, .~. - Margin:Density)
+summary(back.glm)</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = Severity ~ Age + Shape + Margin + Density + Age:Shape + 
