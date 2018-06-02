@@ -11,7 +11,7 @@ output:
 library(broom)
 library(MASS)
 library(magrittr)
-setwd("C:/Users/Oliver/Documents/GitHub/Stat_Model_Project")
+#setwd("C:/Users/Oliver/Documents/GitHub/Stat_Model_Project")
 ```
 
 
@@ -297,6 +297,23 @@ We then note that BI.RADS is not a predictor variable, and remove it from our an
 mammo <- dplyr::select(mammo, Age, Shape, Margin, Density, Severity)
 ```
 
+We generate a correlation matrix to observe any relationships between the predictor variables and the response. It was necessary to omit observations with NA values. Shape and Margin were included as increases in their indices are associated with a greater risk of cancer. Density was omitted as the index is not associated with a greater risk. Thus correlation between Density and Severity would not be statistically meaningful.  
+
+```{r}
+library(corrplot)
+corMat<-cor(na.omit(dplyr::select(mammo, Age, Shape, Margin,Severity)))
+corrplot(corMat, type="upper", order="hclust",tl.col="black",tl.srt = 45 )
+```
+
+Mild positive correlation is observed between Age and the other variables. 
+
+Moderate positive correlation is observed between Severity and the other 3 predictors. 
+
+Strong positive correlation between Shape and Margin. 
+
+
+
+
 We can now check the variable types for the data:
 
 ```{r}
@@ -335,13 +352,14 @@ print(" ")
 summary(mammo$Severity)
 ```
 
-We also create a pairwise scatterplot to observe the relationships between indivisual variables:
+We also create a pairwise scatterplot to observe the relationships between individual variables:
 
 ```{r, fig.cap = "Pairwise scatterplot of Mammographic Mass Severity Data"}
 pairs(mammo)
 ```
 
 There appears to be a weak,possibly linear, positive relationship between Age and Severity. There are no observable relationships between Severity and the other predictors. 
+
 
 ## Model Fitting and Model Selection
 
@@ -406,4 +424,33 @@ In this model, we note that all of the terms have at least on level which is sta
 ```{r, warning = F}
 final.glm <- back.glm
 ```
+
+## Justification of the final model
+
+The following is the proposed final model. 
+
+```{r}
+summary(final.glm)
+```
+
+This model was obtained by first starting with a saturated model with all the two way interaction terms. Statistically insiginificant terms were removed via the backwards selection algorithmn at the 0.05 significance level. Hence the final model is the most parsimonious model with all the statistically significant predictors. 
+
+## Interpretation of Parameters
+
+Intercept: A woman of Age=0 with a mammogram of Shape=1 (round), Margin=1 (circumscribed) has log-odds=-4.7195 of having a malignant tumour. 
+
+Age: Holding all other variables constant, a one year increase in age increases the log-odds of having a malignant tumour by 0.05388. 
+
+Shape: Holding all other variables constant, having a lesion of Shape=2 (oval) increases the log-odds of having a malignant tumour by -.4478 compared to Shape=1 (round). For Shape=2 (lobular), th increase is 0.4992 and for Shape=3 (irregular), the increase is 1.2428, all relative to Shape=1.  
+
+
+Margin: Holding all other variables constant, having a lesion of Margin=2 (microlobulated) increases the log-odds of a malignant tumour by 1.5829 comapred to Margin=1 (circumscribed). For Margin =3 (obscured) the change in log-odds is 1.2631, Margin=4 (ill-defined) 1.5432 and Margin=5 (spiculated) 2.0321, all relative to Margin=1. 
+
+
+
+
+
+
+
+
 
