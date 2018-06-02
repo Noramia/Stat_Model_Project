@@ -3,11 +3,14 @@ title: "SM3_Project"
 author: "Shingyan Kwong"
 date: "May 13, 2018"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   word_document: default
+header-includes:
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
 ---
-```{r,echo=FALSE}
+```{r,echo=FALSE, message = F}
 library(broom)
 library(MASS)
 library(magrittr)
@@ -24,15 +27,18 @@ library(dplyr)
 child<-read.table("Child_Height.txt",header=T)
 ```
 
+Here, we produce pairwise scatterplots for height, weight and length to see the individual relationships between these varaibles (Figure 1):
 
-```{r}
+```{r, echo = F, fig.cap = "Pairwise Scatterplots for Height, Weight and Length"}
 pairs(~Height+Weight+Length,data=child)
 ```
 
-There is evidence of a strong, positive linear relationship between  length and the two predictor variables, height and weight. The associated correlation coefficients are 0.881 and 0.894 respectively. There is also a strong, positive linear relationship between height and weight. This suggests that the two predictors may be dependent one another.
+In figure 1 we see that there is evidence of a strong, positive linear relationship between  length and the two predictor variables, height and weight. The associated correlation coefficients are 0.881 and 0.894 respectively. There is also a strong, positive linear relationship between height and weight. This suggests that the two predictors may be dependent one another.
 
 
 #2. 
+
+Here we fit three linear models: lm1 which fits Length against Height and Weight; lm2 which fits Length against Height; and lm3 which fits Length against Weight.
 
 ```{r}
 lm1<-lm(Length~Height+Weight, data=child)
@@ -54,14 +60,14 @@ Normality: Check normal qq plot. Normality is reasonable if most points between 
 
 #4. 
 
-#Full model
+#Full model (lm1)
 
-```{r}
+```{r, echo = F, fig.cap = "Residuals plots for Full Model"}
 par(mfrow=c(2,2))
 plot(lm1)
 ```
 
-```{r}
+```{r, echo = F, fig.cap = "Residuals plots for Height and Weight Individually (Full Model)"}
 par(mfrow=c(1,2))
 res1<-rstudent(lm1)
 fit<-fitted(lm1)
@@ -72,6 +78,7 @@ abline(0,0,col="red")
 
 ```
 
+From figures 2 and 3 we can make the following assessments:
 
 Linearity: Given the small number of data points available, roughly random scatter is observed in the residual vs fitted and residual vs predictor plots. There is a couple of high residual points but it is not too bad. Linearity is reasonable. 
 
@@ -81,14 +88,15 @@ Normality: There is some minor departure from normality in the beginning and the
 
 Leverage: There are 2 data points in the zone of danger. These high leverage points are having a disproportionate effect on the model. 
 
-#Model with Height only
 
-```{r}
+#Height Model (lm2)
+
+```{r, echo = F, fig.cap = "Residuals plots for Height Model"}
 par(mfrow=c(2,2))
 plot(lm2)
 ```
 
-```{r}
+```{r, echo = F, fig.cap = "Residuals plots for Height and Weight Individually (Height Model)"}
 par(mfrow=c(1,2))
 res1<-rstudent(lm2)
 fit<-fitted(lm2)
@@ -98,23 +106,24 @@ plot(child$Weight,res1,main="Residuals vs weight",pch=20)
 abline(0,0,col="red")
 ```
 
+From figures 4 and 5 we can make the following assessments:
 
 Linearity: Non-random scatter observed in residual vs fitted and residual vs predictor plots. Linearity is not reasonable. 
 
 Constant Variance: Variance appears to increase for the middle fitted values and then decrease again. Constant variance is not reasonable. 
-
 Normality: There are several points deviating from the diagonal line on the normal qq plot. Normality is not reasonable. 
 
 Leverage: There is one point with high leverage. 
 
-#Model with Weight only
 
-```{r}
+#Weight Model (lm3)
+
+```{r, echo = F, fig.cap = "Residuals plots for Weight Model"}
 par(mfrow=c(2,2))
 plot(lm3)
 ```
 
-```{r}
+```{r, echo = F, fig.cap = "Residuals plots for Height and Weight Individually (Weight Model)"}
 par(mfrow=c(1,2))
 res1<-rstudent(lm3)
 fit<-fitted(lm3)
@@ -125,6 +134,8 @@ abline(0,0,col="red")
 
 ```
 
+From figure 6 and 7 we can make the following assessments:
+
 Linearity: Rough random scatter in observed in residual vs fitted and residual vs predictor plots. The fitted plot shows some evidence of curvature but overall it is acceptable. Linearity is reasonable. 
 
 Constant Variance: Variance is roughly constant across the scale location plot. Constant variance is reasonable. 
@@ -133,37 +144,48 @@ Normality: Most points are close to the diagonal line except 2. Normality is rea
 
 Leverage: There is one data point with high leverage. 
 
-#5. Comparison of the three models
+\newpage
 
-Full Model:
-```{r}
+#5.
+
+Here we make a comparison of the three models.
+
+
+We first obtain summaries for each of the three models:
+
+\hfill
+
+**Full Model:**
+```{r, echo = F}
 summary(lm1)
 ```
 
-Height Model:
+\hfill
 
-```{r}
+**Height Model:**
+```{r, echo = F}
 summary(lm2)
-
 ```
 
-Weight Model:
-```{r}
+\newpage
+
+**Weight Model:**
+```{r, echo = F}
 summary(lm3)
-
 ```
 
-(a)
+
+###(a)
 
 In the full model, neither predictor variables is statistically significant (at the 0.05 level), and the numerical values of the two coefficients are both smaller than those of the single predictor models.
 
-(b)
+###(b)
 
-Full model:
+**Full model:**
 
 Holding height constant, the full model predicts that an increase of of 1kg will on average increase the length of the cathetar by 0.42081cm. 
 
-Weight only model:
+**Weight only model:**
 
 Without regard for height, this model predicts that an increase of 1kg will on average increase the cathetar length by 0.61136cm. 
 
@@ -172,11 +194,17 @@ Without regard for height, this model predicts that an increase of 1kg will on a
 ###(a) We construct the model matrices for the height only and weight only models. 
 
 ```{r,echo=FALSE}
-lm2 <- lm(Length ~ Height, data = child)
-lm3 <- lm(Length ~ Weight, data = child)
 M2 <- model.matrix(lm2)
 M3 <-  model.matrix(lm3)
+```
+
+Model Matrix for lm2:
+```{r, echo = F}
 M2
+```
+
+Model matrix for lm3:
+```{r, echo = F}
 M3
 ```
 
@@ -209,6 +237,12 @@ v2_ <- x1 - as.numeric((t(x1) %*% v1)) * v1
 v2 <- v2_ / norm_vec(v2_)
 ```
 
+Now $\mathbf{v}_2$ is given by:
+
+```{r, echo = F}
+v2
+```
+
 Then $\mathcal{L}_1 = span \{\mathbf{v}1, \mathbf{v}2\}$.
 
 Now, an orthonormal basis for $\mathcal{L}_2$:
@@ -217,6 +251,12 @@ Now, an orthonormal basis for $\mathcal{L}_2$:
 w1 <- one / norm_vec(one)
 w2_ <- x2 - as.numeric((t(x2) %*% w1)) * w1
 w2 <- w2_ / norm_vec(w2_)
+```
+
+Now $\mathbf{w}_2$ is given by:
+
+```{r, echo = F}
+w2
 ```
 
 Then $\mathcal{L}_2 = span \{\mathbf{w}1, \mathbf{w}2\}$.
@@ -244,10 +284,15 @@ Where $\mathbf{u}$ and $\mathbf{v}$ are two vectors and $\theta$ is the angle be
 We compute the angle between the two spaces in **(b)** as follows:
 
 ```{r}
-inner <- t(v2) %*% (w2)
+inner <- t(v2) %*% (w2) #Defining the inner product of v2 and w2
 norm_v2 <- norm_vec(v2)
 norm_w2 <- norm_vec(w2)
-theta <- acos(inner/(norm_v2 * norm_w2))
+theta <- acos(inner/(norm_v2 * norm_w2)) #Finding the angle between v2 and w2
+```
+
+Now we have that the angle between $\mathbf{v}_2$ and$\mathbf{w}_2$ is given by:
+
+```{r, echo = F}
 theta
 ```
 
