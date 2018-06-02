@@ -3,8 +3,8 @@ title: "SM3_Project"
 author: "Shingyan Kwong"
 date: "May 13, 2018"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 header-includes:
 - \usepackage{float}
 - \floatplacement{figure}{H}
