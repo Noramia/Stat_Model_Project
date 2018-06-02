@@ -3,9 +3,11 @@ title: "SM3_Project"
 author: "Shingyan Kwong"
 date: "May 13, 2018"
 output:
-  html_document: default
   pdf_document: default
-  word_document: default
+  html_document: default
+header-includes:
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
 ---
 ```{r,echo=FALSE}
 library(broom)
@@ -527,12 +529,5 @@ predict(final.glm,data.frame(Age=60,Shape="2",Margin="3"), type = "response")
 ```
 
 This probability of 0.3381 also makes sense intuitively, as the patient's age and margin values were much more intermediate, and the shape of their tumor is closer to regular end of the spectrum than the irregular end. This means, that in a large group of patients, we would expect that for patients of age 60, with oval shaped tumors and obscured margins, that approximately 34% would have malignant tumors.
-
-
-
-
-
-
-
 
 
