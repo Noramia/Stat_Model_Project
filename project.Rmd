@@ -3,12 +3,12 @@ title: "SM3_Project"
 author: "Shingyan Kwong"
 date: "May 13, 2018"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 header-includes:
-  - \usepackage{float}
-  - \floatplacement{figure}{H}
+- \usepackage{float}
+- \floatplacement{figure}{H}
 ---
 ```{r,echo=FALSE, message = F}
 library(broom)
@@ -325,6 +325,9 @@ In this section we obtain a predictive model for mammographic mass severity, a m
 **Margin** - a factor varaible with five levels: 1 for circumscribed, 2 for microlobulated, 3 for obscured, 4 for ill-defined, and 5 for spiculated;
 
 **Density** - a factor with four levels: 1 for high, 2 for iso, 3 for low, and 4 for fat-containing.
+
+The aim of this study is to produce the best predictive model for mammogram mass severity. The model must have maximum parsimony whilst having minimun residual error. Predicted probabilities of severity may also be generated from the model. This information may 
+be used by clinicians to determine whether a biopsy is appropriate for the patient. 
 
 
 **This introduction should probably be reworked but I this hope is a good starting point**
