@@ -14,6 +14,7 @@ library(broom)
 library(MASS)
 library(magrittr)
 library(dplyr)
+library(broom)
 #setwd("C:/Users/Oliver/Documents/GitHub/Stat_Model_Project")
 ```
 
@@ -415,63 +416,58 @@ There appears to be a weak, possibly linear, positive relationship between Age a
 
 We now fit a logistic linear model (full.glm) to the data, with Severity as the response variable, and Age, Shape, Margin and Density as the predictor variables with interaction terms up to second order. To achieve a parsimony, iInsignificant terms (p-value>0.05) were removed by the backwards selection algorithmn. Our analysis showed that all the interactions terms and Density are not statistically significant at the 0.05. Details of each step of the model selection process are available in the Part B Appendix under "Model Fitting and Model Selection."
 
-```{r, warning = F,echo=F}
+```{r, warning = F,echo=F, include = F}
 full.glm <- glm(Severity ~ (Age+Shape+Margin+Density)^2, data = mammo, family = "binomial")
-summary(full.glm)
 ```
 
 
-```{r, warning = F,echo=F}
+```{r, warning = F,echo=F, include = F}
 back.glm <- update(full.glm, .~. - Margin:Density)
-summary(back.glm)
 ```
 
 
-```{r, warning = F,echo=F}
+```{r, warning = F,echo=F, include = F}
 back.glm <- update(back.glm, .~. - Shape:Density)
-summary(back.glm)
 ```
 
 
-```{r, warning = F,echo=F}
+```{r, warning = F,echo=F, include = F}
 back.glm <- update(back.glm, .~. - Age:Margin)
-summary(back.glm)
 ```
 
 
-```{r, warning = F,echo=F}
+```{r, warning = F,echo=F, include = F}
 back.glm <- update(back.glm, .~. - Shape:Margin)
-summary(back.glm)
 ```
 
 
-```{r, warning = F,echo=F}
+```{r, warning = F,echo=F, include = F}
 back.glm <- update(back.glm, .~. - Age:Density)
-summary(back.glm)
 ```
 
 
-```{r, warning = F,echo=F}
+```{r, warning = F,echo=F, include = F}
 back.glm <- update(back.glm, .~. - Age:Shape)
-summary(back.glm)
 ```
 
 
-```{r, warning = F,echo=F}
+```{r, warning = F,echo=F, include = F}
 back.glm <- update(back.glm, .~. - Density)
-summary(back.glm)
 ```
+
 
 ```{r, warning = F,echo=F}
 final.glm <- back.glm
 ```
+
+\newpage
 
 ## Justification of the final model
 
 The following is the proposed final model. 
 
 ```{r,echo=F}
-summary(final.glm)
+tidy(final.glm)
 ```
 
 This model was obtained by first starting with a saturated model with all the two way interaction terms. Statistically insiginificant terms were removed via the backwards selection algorithmn at the 0.05 significance level. Hence the final model is the most parsimonious model with all the statistically significant predictors. 
