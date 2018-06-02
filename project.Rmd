@@ -11,6 +11,7 @@ output:
 library(broom)
 library(MASS)
 library(magrittr)
+library(dplyr)
 #setwd("C:/Users/Oliver/Documents/GitHub/Stat_Model_Project")
 ```
 
@@ -443,8 +444,89 @@ Age: Holding all other variables constant, a one year increase in age increases 
 
 Shape: Holding all other variables constant, having a lesion of Shape=2 (oval) increases the log-odds of having a malignant tumour by -.4478 compared to Shape=1 (round). For Shape=2 (lobular), th increase is 0.4992 and for Shape=3 (irregular), the increase is 1.2428, all relative to Shape=1.  
 
-
 Margin: Holding all other variables constant, having a lesion of Margin=2 (microlobulated) increases the log-odds of a malignant tumour by 1.5829 comapred to Margin=1 (circumscribed). For Margin =3 (obscured) the change in log-odds is 1.2631, Margin=4 (ill-defined) 1.5432 and Margin=5 (spiculated) 2.0321, all relative to Margin=1. 
+
+
+##Predicting Probabilities and Interpretation
+
+In this section, we use our final model (final.glm) to predict the probability of a specific patient, that is, a patient with given values for each of the predictor varaibles. Given that the response variable is defined to be 0 for benign (not cancerous) and 1 for malignant (cancerous), the fitted values lie between 0 and 1 and hence predict the  probability for a given patient to have a malignant tumor.
+
+We first fit the probabilties of each datapoint in the dataset based on the final model:
+
+```{r}
+probabilities <- fitted(final.glm)
+summary(probabilities)
+```
+
+We can produce a histogram to visualise the overall distribution of probabilities:
+
+```{r, fig.cap = "Histogram of Fitted Probabilities"}
+hist(probabilities)
+```
+
+Here we note that in general, it appears that most patients are either very likely, or very unlikely to have a malignant tumor. As a result, we might expect when predicting probabilities, that is most cases the predictions will be either very high or very low.
+
+We can produce plots to visualise the probabilities for different levels of the predictor variables.
+
+We first define a modified version of the mamo data, including only Age, Shape, Margin and Severity, and ignoring the missing values in order to be able to create valid plots:
+
+```{r}
+newMammo <- mammo %>% select(Age, Margin, Shape, Severity)
+newMammo <- na.omit(newMammo)
+```
+
+
+We can now create plots of probabilities against Age, Shape and Margin:
+
+```{r, fig.cap = "Probabilities against Age"}
+plot(probabilities ~ newMammo$Age)
+```
+
+Here we see that there appears to be a weak, positive relationship between age and the probability of having a malignant tumor, and it is difficult to say whether the relationship is linear or not.
+
+```{r, fig.cap = "Probabilities against Shape"}
+boxplot(probabilities ~ newMammo$Shape)
+```
+
+Here we see that as shape tends from the round, regular shape to a more irregular one, the predicted probabilities appear to increase in general.
+
+```{r, fig.cap = "Probabilities against Margin"}
+boxplot(probabilities ~ newMammo$Margin)
+```
+
+Here we see that as the margin tends from being well-defined to ill-defined, in general, the probability of the tumor being malignant seems to increase.
+
+
+Having observed these relationships, we can now predict the probability of the tumor being malignant for a few specific patients.
+We do so for a patient at an age of 40, with Shape = 1 (round) and Margin = 1 (circumscribed). This is a patient which we would expect to have a relatively low probability, as they are quite young, and their tumor is quite regular in shape and margin.
+
+The predicted probability is given by:
+
+```{r}
+predict(final.glm,data.frame(Age=40,Shape="1",Margin="1"), type = "response")
+```
+
+This probability of 0.07147 alligns well with what we would expect. We can interpret this to mean that from a large group of patients, those with an age of 40, round tumors and circumscribed margins, approximately 7% would have malignant tumors.
+
+
+On the other end of the spectrum, we can predict the probability for a patient with an age of 80, Shape = 4 (irregular) and Margin = 5 (speculated), that is an older patient with an irregular and very much ill-defined tumor.
+
+The predicted probability is given by:
+
+```{r}
+predict(final.glm,data.frame(Age=80,Shape="4",Margin="5"), type = "response")
+```
+
+This probability of 0.9461 also alligns well with what we would expect. This means, that for a large group of patients, we would expect that for patients of age 80, with irregularly shaped tumors and a spiculated margins, that approximately 95% would have malignant tumors.
+
+
+To find what we would expect to be a more intermediate probability, we can then predict the probability for a patient with an age of 60, Shape = 2 (oval), Margin = 3 (obscured):
+
+```{r}
+predict(final.glm,data.frame(Age=60,Shape="2",Margin="3"), type = "response")
+```
+
+This probability of 0.3381 also makes sense intuitively, as the patient's age and margin values were much more intermediate, and the shape of their tumor is closer to regular end of the spectrum than the irregular end. This means, that in a large group of patients, we would expect that for patients of age 60, with oval shaped tumors and obscured margins, that approximately 34% would have malignant tumors.
 
 
 
