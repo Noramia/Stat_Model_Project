@@ -17,6 +17,7 @@ library(dplyr)
 library(broom)
 library(ggplot2)
 library(GGally)
+library(corrplot)
 #setwd("C:/Users/Oliver/Documents/GitHub/Stat_Model_Project")
 ```
 
@@ -362,7 +363,7 @@ ggpairs(mammo)
 
 From figure 9 we can make the following observations:
 
-Mild positive correlation is observed between Age and the other variables. There is a correlation are 0.364 and 0.411 for shape and age and margin and age respectively.
+Mild positive correlation is observed between Age and the other variables. There is a correlation are 0.364 and 0.411 for Shape and Age and Margin and Age respectively.
 
 Moderate positive correlation is observed between Severity and the other 3 predictors. 
 
@@ -400,13 +401,9 @@ To visualise the data, we first produce summary statisitics for the dataset as a
 
 ```{r,echo=FALSE}
 summary(mammo$Age)
-print(" ")
 summary(mammo$Shape)
-print(" ")
 summary(mammo$Margin)
-print(" ")
 summary(mammo$Density)
-print(" ")
 summary(mammo$Severity)
 ```
 
@@ -478,7 +475,7 @@ In figure 14 it can be seen that patients who have benign tumors tend to have mo
 
 Next, we consider Margin (Figure 15):
 
-```{r, fig.cap = "Bar Graph of Severity Against Shape", echo = F, warning = F}
+```{r, fig.cap = "Bar Graph of Severity Against Margin", echo = F, warning = F}
 ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Margin))
 ```
 
@@ -489,8 +486,8 @@ We see in figure 15 that ptients who have benign tumors tend to have more circum
 
 Finally, we consider Density (Figure 16):
 
-```{r, fig.cap = "Bar Graph of Severity Against Shape", echo = F, warning = F}
-ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Margin))
+```{r, fig.cap = "Bar Graph of Severity Against Density", echo = F, warning = F}
+ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Density))
 ```
 
 In figure 16 we see that patients who have non-malignant tumors tend to have more iso and low density. In addition, these two groups (severity=1 and severity=0) tend to have equal number of patients with high and fat-containing density.
@@ -665,7 +662,7 @@ However, when we started, we soon realised that some of the lecture content requ
 
 **Shingyan:**
 
-**Mohammad:**
+**Mohammad:** I tried to focus more on the codding side of the project and tried to make the best of all the consulting times. I was going through all the coding sections and was making sure that I understand the concept. There were times that others were unable to make to the consulting times due to their scandals to ask what they were struggling to understand. Therefore, I was asking their questions, if I was unable to provide them with the solution and was passing them on to others.
 
 **Xiaomeng:**
 
@@ -678,6 +675,8 @@ However, when we started, we soon realised that some of the lecture content requ
 \newpage
 
 # Appendix
+
+Here, we display the code used to generate ouput and plots following the order of the report. In part B, we display the model selection process in full.
 
 
 ##Part A
@@ -841,66 +840,98 @@ theta
 ## Part B
 
 ##Data Entry and Cleaning
-First, we enter the data and define any values which are assigned question marks to be missing values:
 
-```{r}
+Entering the data and defining any values which are assigned question marks to be missing values:
+```{r, eval = F}
 mammo <- read.csv("mammo.txt", header=TRUE, na.strings = "?")
 ```
 
-We then note that BI.RADS is not a predictor variable, and remove it from our analysis:
-
-```{r}
+Removing BI.RADS from our analysis:
+```{r, eval = F}
 mammo <- dplyr::select(mammo, Age, Shape, Margin, Density, Severity)
 ```
 
-
-```{r}
-library(corrplot)
+Correlation matrix using corrplot package:
+```{r, eval = F}
 corMat<-cor(na.omit(dplyr::select(mammo, Age, Shape, Margin,Severity)))
 corrplot(corMat, type="upper", order="hclust",tl.col="black",tl.srt = 45 )
 ```
 
+Pairwise scatterplot for mammo data:
+```{r, fig.cap = "Comparison Matrix for Mammo Data", warning = F, eval = F}
+ggpairs(mammo)
+```
 
-```{r}
+Checking variable class:
+```{r, eval = F}
 str(mammo)
 ```
 
-
-```{r}
+Assigning varaibles as factors:
+```{r, eval = F}
 mammo$Shape <- as.factor(mammo$Shape)
 mammo$Margin <- as.factor(mammo$Margin)
 mammo$Density <- as.factor(mammo$Density)
 mammo$Severity <- as.factor(mammo$Severity)
 ```
 
-
-```{r}
+Checking variable classes again:
+```{r, eval = F}
 str(mammo)
 ```
 
 
 ## Data Visualisations and Data Summaries
 
-```{r}
+Producing summary statistics:
+```{r, eval = F}
 summary(mammo$Age)
-print(" ")
 summary(mammo$Shape)
-print(" ")
 summary(mammo$Margin)
-print(" ")
 summary(mammo$Density)
-print(" ")
 summary(mammo$Severity)
 ```
 
-```{r, fig.cap = "Pairwise scatterplot of Mammographic Mass Severity Data"}
-pairs(mammo)
+
+Boxplot of Age Against Severity:
+```{r, fig.cap = "Boxplot of Age Against Severity", eval = F, warning = F}
+plot(mammo$Age~mammo$Severity)
+```
+
+Boxplot of Age Against Shape:
+```{r, fig.cap = "Boxplot of Age Against Shape", eval = F, warning = F}
+plot(mammo$Age~mammo$Shape)
+```
+
+Boxplot of Age Against Margin:
+```{r, fig.cap = "Boxplot of Age Against Margin", eval = F, warning = F}
+plot(mammo$Age~mammo$Margin)
+```
+
+Boxplot of Age Against Density:
+```{r, fig.cap = "Boxplot of Age Against Density", eval = F, warning = F}
+plot(mammo$Age~mammo$Density)
+```
+
+Bar Graph of Severity Against Shape:
+```{r, fig.cap = "Bar Graph of Severity Against Shape", eval = F, warning = F}
+ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Shape))
+```
+
+Bar Graph of Severity Against Margin:
+```{r, fig.cap = "Bar Graph of Severity Against Margin", eval = F, warning = F}
+ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Margin))
+```
+
+Bar Graph of Severity Against Density:
+```{r, fig.cap = "Bar Graph of Severity Against Density", eval = F, warning = F}
+ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Density))
 ```
 
 
 ## Model Fitting and Model Selection
 
-
+Fitting full model:
 ```{r, warning = F}
 full.glm <- glm(Severity ~ (Age+Shape+Margin+Density)^2, data = mammo, family = "binomial")
 summary(full.glm)
@@ -963,48 +994,58 @@ final.glm <- back.glm
 
 ## Justification of the final model
 
-```{r}
+Printing model summary:
+```{r, eval = F}
 summary(final.glm)
 ```
 
-## Interpretation of Parameters
-
 ##Predicting Probabilities and Interpretation
 
-```{r}
+Fitting probabilities from data:
+```{r, eval = F}
 probabilities <- fitted(final.glm)
 summary(probabilities)
 ```
 
-```{r, fig.cap = "Histogram of Fitted Probabilities"}
+Producing histogram of probabilties:
+```{r, fig.cap = "Histogram of Fitted Probabilities", eval = F}
 hist(probabilities)
 ```
 
-```{r}
+Assigning new version of mammo data with only Age, Margin, Shape and Density and no missing values:
+```{r, eval = F}
 newMammo <- mammo %>% select(Age, Margin, Shape, Severity)
 newMammo <- na.omit(newMammo)
 ```
 
-```{r, fig.cap = "Probabilities against Age"}
+Plotting probabilties against Age:
+```{r, fig.cap = "Probabilities against Age", eval = F}
 plot(probabilities ~ newMammo$Age)
 ```
 
-```{r, fig.cap = "Probabilities against Shape"}
+Plotting probabilties against Shape:
+```{r, fig.cap = "Probabilities against Shape", eval = F}
 boxplot(probabilities ~ newMammo$Shape)
 ```
 
-```{r, fig.cap = "Probabilities against Margin"}
+Plotting probabilties against Margin:
+```{r, fig.cap = "Probabilities against Margin", eval = F}
 boxplot(probabilities ~ newMammo$Margin)
 ```
 
-```{r}
+Predicting probability of malignant tumor for patient of Age = 40, Shape = 1, Margin = 1:
+```{r, eval = F}
 predict(final.glm,data.frame(Age=40,Shape="1",Margin="1"), type = "response")
 ```
 
-```{r}
+Predicting probability of malignant tumor for patient of Age = 80, Shape = 4, Margin = 5:
+```{r, eval = F}
 predict(final.glm,data.frame(Age=80,Shape="4",Margin="5"), type = "response")
 ```
 
-
+Predicting probability of malignant tumor for patient of Age = 60, Shape = 2, Margin = 3:
+```{r,echo=F}
+predict(final.glm,data.frame(Age=60,Shape="2",Margin="3"), type = "response")
+```
 
 
