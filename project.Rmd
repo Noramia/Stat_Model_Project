@@ -565,6 +565,21 @@ predict(final.glm,data.frame(Age=60,Shape="2",Margin="3"), type = "response")
 This probability of 0.3381 also makes sense intuitively, as the patient's age and margin values were much more intermediate, and the shape of their tumor is closer to regular end of the spectrum than the irregular end. This means, that in a large group of patients, we would expect that for patients of age 60, with oval shaped tumors and obscured margins, that approximately 34% would have malignant tumors.
 
 
+\newpage
+
+#Part C
+
+Our group was comprised of five members and we commenced the project after our first face-to-face meeting on the fourth of May. During the first meeting, we decided that we would all attempt the project questions on our own first because we value the project as a good opportunity to learn and practice the course material. We planned that we would then come together with our answers to confirm that we were on the same page and identify any mistakes that we may have made. 
+
+Our initial plan was to meet one week after the first meeting, during which time we would try our best to finish part A individually. Then in the second week (13/05-19/05) we would assign one or two group members to write up part A, based on the answers we all agree upon in the second meeting. At this point we started to consider how to approach part B. Adopting a similar timeline as for part A, we decided to meet on the Friday of the second week to discuss the part B. In doing this, we would ensure that the bulk of the project was completed quite early, so that we would have ample time to format our write-up and ask questions about aspects about which we were unsure. Moreover, throughout the group project, if anyone had any problem, it was sent to the group chat and whoever was able to answer it provided some help.
+
+However, when we started, we soon realised that some of the lecture content required for the project had not yet been covered, but we still tried to adhere to the planned timeline as much as possible. Part A was finished during the first week, other than question 6. In the second face-to-face meeting on 11th of May we had mutually agreed answers to all the other questions and a draft of the formal write-up of part A was allocated to Xiaomeng and Wenjun, who were to then send it to Anthony and Oliver to format it in Rmarkdown. The common questions we had were solved by going to both of the consulting times each week. Not all of our group members were available during those two time slots, but at least one member would go with questions prepared by the group and sent the feedback to the group chat afterwards. After the meeting on the first of June, all of us were confident with our answers for part B, and the write-up of part B was undertaken by Oliver and Anthony. During the entire period, we discussed the project in a Facebook group chat and in person after the lectures and tutorials. Wenjun was responsible for writing the reflection for part C, based on minutes kept in the meetings by Mohammad.  We then met on the third of June to ensure everyone was happy to submit the project and to see if there were any possible further improvements. 
+
+###Individual Reflections:
+
+**Wenjun:** Other than attempting the project on my own, participating in all the meetings and discussion, I drafted the write-up of part A with Xiaomeng and was in charge of writing Part C. I was delegated to go to several consulting and give the feedbacks to the group members could not make it too. 
+
+
 
 
 \newpage
