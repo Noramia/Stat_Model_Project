@@ -1,5 +1,5 @@
 ---
-title: "SM3_Project"
+title: "Statistical Modelling III Project"
 author: "Shingyan Kwong, Mohammad Rezai, Xiaomeng Gu, Wenjun Liu and Oliver Lountain"
 date: "June 3, 2018"
 output:
@@ -36,7 +36,7 @@ Here, we produce pairwise scatterplots for height, weight and length to see the 
 pairs(~Height+Weight+Length,data=child)
 ```
 
-In figure 1 we see that there is evidence of a strong, positive linear relationship between  length and the two predictor variables, height and weight. The associated correlation coefficients are 0.881 and 0.894 respectively. There is also a strong, positive, linear relationship between height and weight. This suggests that the two predictors may be dependent one another.
+In figure 1 we see that there is evidence of a strong, positive linear relationship between  length and the two predictor variables, height and weight. The associated correlation coefficients are 0.881 and 0.894 respectively. There is also a strong, positive, linear relationship between height and weight. This suggests that the two predictors may depend on one another.
 
 
 #2. 
@@ -320,7 +320,7 @@ The angle is not $\pi$ indicating that the two spaces are not orthogonal. This s
 
 #7.
 
-In this section we decide upon a final model for the data. We note that since the subspaces $\mathcal{L}_1 \cap ({\mathcal{L}_1 \cap \mathcal{L}_2})^{\perp}$ and $\mathcal{L}_2 \cap ({\mathcal{L}_1 \cap \mathcal{L}_2})^{\perp}$ are not orthogonal, the weight and height predictors are not independent; more specifially, they have a significant correlation of 0.961. As such, the full model in which Length was fitted against both Height and Weight should not be used. Now, what remains is to decide between the individual height and weight models. In figure 4, we see that the assumptions of linearity, constant variance and normality fail in the height model, and in figure 6 it is clear that these assumptions are much more reasonanble in the weight model. As a result, we can conclude that the most appropriate model for the data is lm3, the model in which length is fit against height alone.
+In this section we decide upon a final model for the data. We note that since the subspaces $\mathcal{L}_1 \cap ({\mathcal{L}_1 \cap \mathcal{L}_2})^{\perp}$ and $\mathcal{L}_2 \cap ({\mathcal{L}_1 \cap \mathcal{L}_2})^{\perp}$ are not orthogonal, the weight and height predictors are not independent; more specifially, they have a significant correlation of 0.961. As such, the full model in which Length was fitted against both Height and Weight should not be used. Now, what remains is to decide between the individual height and weight models. In figure 4, we see that the assumptions of linearity, constant variance and normality fail in the height model, and in figure 6 it is clear that these assumptions are much more reasonanble in the weight model. As a result, we can conclude that the most appropriate model for the data is lm3, the model in which ength is fit against height alone.
 
 
 \newpage
@@ -340,11 +340,9 @@ In this section we obtain a predictive model for mammographic mass severity, a m
 
 **Density** - a factor with four levels: 1 for high, 2 for iso, 3 for low, and 4 for fat-containing.
 
-The aim of this study is to produce the best predictive model for mammogram mass severity. The model must be parsimonious whilst having minimun residual error. Predicted probabilities of severity may also be generated from the model. This information may 
+The aim of this study is to produce the best predictive model for mammographic mass severity. The model must be parsimonious whilst having minimun residual error. Predicted probabilities of severity may also be generated from the model. This information may 
 be used by clinicians to determine whether a biopsy is appropriate for the patient. 
 
-
-**This introduction should probably be reworked but I this hope is a good starting point**
 
 
 ##Data Entry and Cleaning
@@ -354,13 +352,13 @@ First, we enter the data and define any values which are assigned question marks
 mammo <- read.csv("mammo.txt", header=TRUE, na.strings = "?")
 ```
 
-We then note that BI.RADS is not a predictor variable, and remove it from our analysis:
+We then note that BI.RADS is not a predictor variable, and remove it from our analysis.
 
 ```{r,echo=F}
 mammo <- dplyr::select(mammo, Age, Shape, Margin, Density, Severity)
 ```
 
-We generate a correlation matrix and a pairwise scatterplot to observe any relationships between the predictor variables and the response. It was necessary to omit observations with NA values. Shape and Margin were included as increases in their indices are associated with a greater risk of cancer. Density was omitted as the index is not associated with a greater risk. Thus correlation between Density and Severity would not be statistically meaningful.  
+We generate a correlation matrix and a pairwise scatterplot to observe any relationships between the predictor variables and the response. It was necessary to omit observations with NA values to produce these plots. Shape and Margin were included as increases in their values are associated with a greater risk of cancer. Density was omitted as the value is not associated with a greater risk. Thus correlation between Density and Severity would not be statistically meaningful.  
 
 ```{r,echo=F,warning=F,message=F,fig.cap = "Correlation matrix depicting the relationship between Margin, Shape, Severity and Age."}
 library(corrplot)
@@ -368,13 +366,13 @@ corMat<-cor(na.omit(dplyr::select(mammo, Age, Shape, Margin,Severity)))
 corrplot(corMat, type="upper", order="hclust",tl.col="black",tl.srt = 45 )
 ```
 
-```{r, fig.cap = "Comparison Matrix for Mammo Data", warning = F, echo = F}
-ggpairs(mammo)
+```{r, fig.cap = "Comparison Matrix depicting the relationship between Margin, Shape, Severity and Age.", warning = F, echo = F}
+ggpairs(na.omit(dplyr::select(mammo, Age, Shape, Margin,Severity)))
 ```
 
-From figure 9 we can make the following observations:
+From figures 8 and 9 we can make the following observations:
 
-Mild positive correlation is observed between Age and the other variables. There is a correlation are 0.364 and 0.411 for Shape and Age and Margin and Age respectively.
+Mild positive correlation is observed between Age and the other variables. There correlations are 0.364 and 0.411 for Shape and Age and Margin and Age respectively.
 
 Moderate positive correlation is observed between Severity and the other 3 predictors. 
 
@@ -429,7 +427,7 @@ First, for Severity (Figure 10):
 plot(mammo$Age~mammo$Severity)
 ```
 
-In figure 10 we note that in general, a severity value of 1 is correlated with higher ages than that of 0. In other words, patients with malignant tumors tend to be older than patients with benign tumors Also, the interquartile range box for severity = 0 tends to be larger than severity = 1. We also note that there is an outlier at a low age (approximately 30) when severity = 1.
+In figure 10 we note that in general, a severity value of 1 is correlated with higher ages than that of 0. In other words, patients with malignant tumors tend to be older than patients with benign tumors Also, the interquartile range for severity = 0 tends to be larger than severity = 1. We also note that there is an outlier at a low age (approximately 30) when severity = 1.
 
 
 \newpage
@@ -453,7 +451,7 @@ plot(mammo$Age~mammo$Margin)
 ```
 
 
-In figure 12 it can be seen that the median age for patients who have obscured, ill-defined and spiculated margin is approximately equal. Moreover, the interquartile range for microlobulated margin is larger than for others. There is a outlier in ill-defined margin.
+In figure 12 it can be seen that the median age for patients who have obscured, ill-defined and spiculated margins is approximately equal. Moreover, the interquartile range for microlobulated margin is larger than for others. There is a outlier in ill-defined margin.
 
 
 \newpage
@@ -479,7 +477,7 @@ First, we consider Shape (Figure 14):
 ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Shape))
 ```
 
-In figure 14 it can be seen that patients who have benign tumors tend to have more round shapes and oval shapes than patients who have malignant ones.  Furthermore, patients who have benign tumors tend to have less irregular shape than patients who have malignant tumors. There is an approximately equal number of patients that have lobular shape between patients who have malignant tumors and those who do not.  
+In figure 14 it can be seen that patients who have benign tumors tend to have more round shapes and oval shapes than patients who have malignant ones.Furthermore, patients who have benign tumors tend to have more regular shape than patients who have malignant tumors. There is an approximately equal number of patients that have lobular shape between patients who have malignant tumors and those who do not.  
 
 
 \newpage
@@ -490,7 +488,7 @@ Next, we consider Margin (Figure 15):
 ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Margin))
 ```
 
-We see in figure 15 that ptients who have benign tumors tend to have more circumscribed margin than those whose tumors are malignant. Moreover, patients who have non-malignant tumors tend to have less microlobulated, obscured, ill-defined, and spiculated margin than patients who have malignant ones.
+We see in figure 15 that patients who have benign tumors tend to have more circumscribed margin than those whose tumors are malignant. Moreover, patients who have non-malignant tumors tend to have less microlobulated, obscured, ill-defined, and spiculated margin than patients who have malignant ones.
 
 
 \newpage
@@ -501,7 +499,7 @@ Finally, we consider Density (Figure 16):
 ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Density))
 ```
 
-In figure 16 we see that patients who have non-malignant tumors tend to have more iso and low density. In addition, these two groups (severity=1 and severity=0) tend to have equal number of patients with high and fat-containing density.
+In figure 16 we see that patients who have non-malignant tumors tend to have more iso and low density. In addition, these two groups (severity = 1 and severity = 0) tend to have equal number of patients with high and fat-containing density.
 
 
 
@@ -564,17 +562,17 @@ The following is the proposed final model.
 tidy(final.glm)
 ```
 
-This model was obtained by first starting with a saturated model with all the two way interaction terms. Statistically insiginificant terms were removed via the backwards selection algorithmn at the 0.05 significance level. Hence the final model is the most parsimonious model with all the statistically significant predictors. 
+This model was obtained by first starting with a saturated model with all the two way interaction terms. Statistically insiginificant terms were removed via the backwards selection algorithmn at the 5% significance level. Hence the final model is the most parsimonious model with all the statistically significant predictors. 
 
 ## Interpretation of Parameters
 
-Intercept: A woman of Age=0 with a mammogram of Shape=1 (round), Margin=1 (circumscribed) has log-odds=-4.7195 of having a malignant tumour. 
+Intercept: A woman of Age = 0 with a mammogram of Shape = 1 (round), Margin=1 (circumscribed) has log-odds = -4.7195 of having a malignant tumour. 
 
 Age: Holding all other variables constant, a one year increase in age increases the log-odds of having a malignant tumour by 0.05388. 
 
-Shape: Holding all other variables constant, having a lesion of Shape=2 (oval) increases the log-odds of having a malignant tumour by -.4478 compared to Shape=1 (round). For Shape=2 (lobular), th increase is 0.4992 and for Shape=3 (irregular), the increase is 1.2428, all relative to Shape=1.  
+Shape: Holding all other variables constant, having a lesion of Shape = 2 (oval) increases the log-odds of having a malignant tumour by -.4478 compared to Shape = 1 (round). For Shape = 3 (lobular), th increase is 0.4992 and for Shape = 4 (irregular), the increase is 1.2428, all relative to Shape = 1.
 
-Margin: Holding all other variables constant, having a lesion of Margin=2 (microlobulated) increases the log-odds of a malignant tumour by 1.5829 comapred to Margin=1 (circumscribed). For Margin =3 (obscured) the change in log-odds is 1.2631, Margin=4 (ill-defined) 1.5432 and Margin=5 (spiculated) 2.0321, all relative to Margin=1. 
+Margin: Holding all other variables constant, having a lesion of Margin = 2 (microlobulated) increases the log-odds of a malignant tumour by 1.5829 comapred to Margin = 1 (circumscribed). For Margin = 3 (obscured) the change in log-odds is 1.2631, Margin = 4 (ill-defined) 1.5432 and Margin = 5 (spiculated) 2.0321, all relative to Margin = 1. 
 
 
 ##Predicting Probabilities and Interpretation
@@ -594,7 +592,7 @@ We can produce a histogram to visualise the overall distribution of probabilitie
 hist(probabilities)
 ```
 
-Here we note that in general, it appears that most patients are either very likely, or very unlikely to have a malignant tumor. As a result, we might expect when predicting probabilities, that is most cases the predictions will be either very high or very low.
+Here we note that in general, it appears that most patients are either very likely, or very unlikely to have a malignant tumor. As a result, we might expect when predicting probabilities, that in most cases the predictions will be either very high or very low.
 
 We can produce plots to visualise the probabilities for different levels of the predictor variables.
 
