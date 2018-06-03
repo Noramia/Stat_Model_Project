@@ -662,7 +662,7 @@ However, when we started, we soon realised that some of the lecture content requ
 
 **Shingyan:**
 
-**Mohammad:** I tried to focus more on the codding side of the project and tried to make the best of all the consulting times. I was going through all the coding sections and was making sure that I understand the concept. There were times that others were unable to make to the consulting times due to their scandals to ask what they were struggling to understand. Therefore, I was asking their questions, if I was unable to provide them with the solution and was passing them on to others.
+**Mohammad:** I tried to focus more on the codding side of the project and tried to make the best of all the consulting times. I was going through all the coding sections and was making sure that I understand the concept. There were times that others were unable to make to the consulting times due to their schedules to ask what they were struggling to understand. Therefore, I was asking their questions, if I was unable to provide them with the solution and was passing them on to others.
 
 **Xiaomeng:**
 
