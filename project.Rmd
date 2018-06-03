@@ -1,7 +1,7 @@
 ---
 title: "SM3_Project"
-author: "Shingyan Kwong"
-date: "May 13, 2018"
+author: "Shingyan Kwong, Mohammad Rezai, Xiaomeng Gu, Wenjun Liu and Oliver Lountain"
+date: "June 3, 2018"
 output:
   pdf_document: default
   html_document: default
@@ -15,6 +15,8 @@ library(MASS)
 library(magrittr)
 library(dplyr)
 library(broom)
+library(ggplot2)
+library(GGally)
 #setwd("C:/Users/Oliver/Documents/GitHub/Stat_Model_Project")
 ```
 
@@ -346,7 +348,7 @@ We then note that BI.RADS is not a predictor variable, and remove it from our an
 mammo <- dplyr::select(mammo, Age, Shape, Margin, Density, Severity)
 ```
 
-We generate a correlation matrix to observe any relationships between the predictor variables and the response. It was necessary to omit observations with NA values. Shape and Margin were included as increases in their indices are associated with a greater risk of cancer. Density was omitted as the index is not associated with a greater risk. Thus correlation between Density and Severity would not be statistically meaningful.  
+We generate a correlation matrix and a pairwise scatterplot to observe any relationships between the predictor variables and the response. It was necessary to omit observations with NA values. Shape and Margin were included as increases in their indices are associated with a greater risk of cancer. Density was omitted as the index is not associated with a greater risk. Thus correlation between Density and Severity would not be statistically meaningful.  
 
 ```{r,echo=F,warning=F,message=F,fig.cap = "Correlation matrix depicting the relationship between Margin, Shape, Severity and Age."}
 library(corrplot)
@@ -354,14 +356,20 @@ corMat<-cor(na.omit(dplyr::select(mammo, Age, Shape, Margin,Severity)))
 corrplot(corMat, type="upper", order="hclust",tl.col="black",tl.srt = 45 )
 ```
 
+```{r, fig.cap = "Comparison Matrix for Mammo Data", warning = F, echo = F}
+ggpairs(mammo)
+```
 
-Mild positive correlation is observed between Age and the other variables. 
+From figure 9 we can make the following observations:
+
+Mild positive correlation is observed between Age and the other variables. There is a correlation are 0.364 and 0.411 for shape and age and margin and age respectively.
 
 Moderate positive correlation is observed between Severity and the other 3 predictors. 
 
-Strong positive correlation between Shape and Margin. 
+Strong positive correlation between Shape and Margin with a correlation of 0.742. 
 
 
+\newpage
 
 
 We can now check the variable types for the data:
@@ -402,14 +410,92 @@ print(" ")
 summary(mammo$Severity)
 ```
 
-We also create a pairwise scatterplot to observe the relationships between individual variables (Figure 9):
 
-```{r, fig.cap = "Pairwise scatterplot of Mammographic Mass Severity Data",echo=F}
-pairs(mammo)
+We can then generate boxplots of Age against the other four predictors to see how the different levels of the factor variables are affected by a patients age.
+
+\newpage
+
+First, for Severity (Figure 10):
+
+```{r, fig.cap = "Boxplot of Age Against Severity", echo = F, warning = F}
+plot(mammo$Age~mammo$Severity)
+```
+
+In figure 10 we note that in general, a severity value of 1 is correlated with higher ages than that of 0. In other words, patients with malignant tumors tend to be older than patients with benign tumors Also, the interquartile range box for severity = 0 tends to be larger than severity = 1. We also note that there is an outlier at a low age (approximately 30) when severity = 1.
+
+
+\newpage
+
+Then, for Shape (Figure 11):
+
+```{r, fig.cap = "Boxplot of Age Against Shape", echo = F, warning = F}
+plot(mammo$Age~mammo$Shape)
+```
+
+In figure 11 we see that the median ages for patient with round and oval shapes are approximately equal. Also, the boxplot for patients with lobular shape is left skewed. There is a outlier in the boxplot with round shape, and one in the boxplot with irregular shape. 
+
+
+\newpage
+
+
+Next, for Margin (Figure 12):
+
+```{r, fig.cap = "Boxplot of Age Against Margin", echo = F, warning = F}
+plot(mammo$Age~mammo$Margin)
 ```
 
 
-There appears to be a weak, possibly linear, positive relationship between Age and Severity. There are no observable relationships between Severity and the other predictors. 
+In figure 12 it can be seen that the median age for patients who have obscured, ill-defined and spiculated margin is approximately equal. Moreover, the interquartile range for microlobulated margin is larger than for others. There is a outlier in ill-defined margin.
+
+
+\newpage
+
+Finally, for Density (Figure 13):
+
+```{r, fig.cap = "Boxplot of Age Against Margin", echo = F, warning = F}
+plot(mammo$Age~mammo$Density)
+```
+
+In figure 13 we note that the boxplots for high and low density are left-skewed, and the boxplot for iso density is right-skewed. Although the median age for low and fat-containing density is similar, the age of low density group is more variable than the other. Moreover, the range from the lowest age to the highest age for low density is larger than  others.
+
+
+
+
+We can also create bar graphs to visualise how the number of patients with different values for each of the three factor predictor variables is distributed with respect to their Severity value.
+
+\newpage
+
+First, we consider Shape (Figure 14):
+
+```{r, fig.cap = "Bar Graph of Severity Against Shape", echo = F, warning = F}
+ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Shape))
+```
+
+In figure 14 it can be seen that patients who have benign tumors tend to have more round shapes and oval shapes than patients who have malignant ones.  Furthermore, patients who have benign tumors tend to have less irregular shape than patients who have malignant tumors. There is an approximately equal number of patients that have lobular shape between patients who have malignant tumors and those who do not.  
+
+
+\newpage
+
+Next, we consider Margin (Figure 15):
+
+```{r, fig.cap = "Bar Graph of Severity Against Shape", echo = F, warning = F}
+ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Margin))
+```
+
+We see in figure 15 that ptients who have benign tumors tend to have more circumscribed margin than those whose tumors are malignant. Moreover, patients who have non-malignant tumors tend to have less microlobulated, obscured, ill-defined, and spiculated margin than patients who have malignant ones.
+
+
+\newpage
+
+Finally, we consider Density (Figure 16):
+
+```{r, fig.cap = "Bar Graph of Severity Against Shape", echo = F, warning = F}
+ggplot(mammo, aes(x=mammo$Severity))+geom_bar(aes(fill=mammo$Margin))
+```
+
+In figure 16 we see that patients who have non-malignant tumors tend to have more iso and low density. In addition, these two groups (severity=1 and severity=0) tend to have equal number of patients with high and fat-containing density.
+
+
 
 
 ## Model Fitting and Model Selection
@@ -494,9 +580,9 @@ probabilities <- fitted(final.glm)
 summary(probabilities)
 ```
 
-We can produce a histogram to visualise the overall distribution of probabilities:
+We can produce a histogram to visualise the overall distribution of probabilities (Figure 17):
 
-```{r, fig.cap = "Histogram of Fitted Probabilities"}
+```{r, fig.cap = "Histogram of Fitted Probabilities", echo = F}
 hist(probabilities)
 ```
 
@@ -512,7 +598,7 @@ newMammo <- na.omit(newMammo)
 ```
 
 
-We can now create plots of probabilities against Age, Shape and Margin:
+We can now create plots of probabilities against Age, Shape and Margin (Figures 18, 19 and 20 respectively):
 
 ```{r, fig.cap = "Probabilities against Age",echo=F}
 plot(probabilities ~ newMammo$Age)
@@ -575,10 +661,17 @@ Our initial plan was to meet one week after the first meeting, during which time
 
 However, when we started, we soon realised that some of the lecture content required for the project had not yet been covered, but we still tried to adhere to the planned timeline as much as possible. Part A was finished during the first week, other than question 6. In the second face-to-face meeting on 11th of May we had mutually agreed answers to all the other questions and a draft of the formal write-up of part A was allocated to Xiaomeng and Wenjun, who were to then send it to Anthony and Oliver to format it in Rmarkdown. The common questions we had were solved by going to both of the consulting times each week. Not all of our group members were available during those two time slots, but at least one member would go with questions prepared by the group and sent the feedback to the group chat afterwards. After the meeting on the first of June, all of us were confident with our answers for part B, and the write-up of part B was undertaken by Oliver and Anthony. During the entire period, we discussed the project in a Facebook group chat and in person after the lectures and tutorials. Wenjun was responsible for writing the reflection for part C, based on minutes kept in the meetings by Mohammad.  We then met on the third of June to ensure everyone was happy to submit the project and to see if there were any possible further improvements. 
 
-###Individual Reflections:
+###Individual Contributions:
+
+**Shingyan:**
+
+**Mohammad:**
+
+**Xiaomeng:**
 
 **Wenjun:** Other than attempting the project on my own, participating in all the meetings and discussion, I drafted the write-up of part A with Xiaomeng and was in charge of writing Part C. I was delegated to go to several consulting and give the feedbacks to the group members could not make it too. 
 
+**Oliver:**
 
 
 
