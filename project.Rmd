@@ -671,13 +671,13 @@ However, when we started, we soon realised that some of the lecture content requ
 
 ###Individual Contributions:
 
-**Shingyan:**
+**Shingyan:** I have attended several group meetings to discuss the project. I assisted in writing up Part A in R Markdown. I worked on the code for Part B and wrote it up together with Oliver. Together we also edited the project script and made the final product presentable. 
 
 **Mohammad:** I tried to focus more on the codding side of the project and tried to make the best of all the consulting times. I was going through all the coding sections and was making sure that I understand the concept. There were times that others were unable to make to the consulting times due to their schedules to ask what they were struggling to understand. Therefore, I was asking their questions, if I was unable to provide them with the solution and was passing them on to others.
 
-**Xiaomeng:**
+**Xiaomeng:** I attempted the majority of the project alone, and I did not go to the consulting due to a timetable clash. Therefore, I sought advice from the group members who went. Also, I did draft the part A with Wenjun Liu and I was also working on the data visualisation for part b.
 
-**Wenjun:** Other than attempting the project on my own, participating in all the meetings and discussion, I drafted the write-up of part A with Xiaomeng and was in charge of writing Part C. I was delegated to go to several consulting and give the feedbacks to the group members could not make it too. 
+**Wenjun:** Other than attempting the project on my own, participating in all the meetings and discussion, I drafted the write-up of part A with Xiaomeng and was in charge of writing Part C. I was delegated to go to several consultings and give the feedback to the group members could not make it too. 
 
 **Oliver:** As was the case for all group members, I attempted the majority of the project alone before we discussed answers as a group to determine what to include in the report. In the writing of the final report, my major roles were explaining the subspaces question, as well as collating and formatting the work into single polished document with Anthony. 
 
