@@ -63,6 +63,8 @@ The model assumptions which may be checked via diagnostic plots are as follows.
 
 **Leverage:** Check the residuals vs. leverage plot. The assumption that there are no points of high leverage is reasonable if there are no points beyond Cook's distance, that is, no highly influential points in the dataset.
 
+As well as these assumptions, it is important to check that the data are independent, but this cannot be done with diagnostic plots and is based entirely on the way in which the data was collected.
+
 #4. 
 
 
