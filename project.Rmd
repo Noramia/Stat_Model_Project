@@ -36,7 +36,7 @@ Here, we produce pairwise scatterplots for height, weight and length to see the 
 pairs(~Height+Weight+Length,data=child)
 ```
 
-In figure 1 we see that there is evidence of a strong, positive linear relationship between  length and the two predictor variables, height and weight. The associated correlation coefficients are 0.881 and 0.894 respectively. There is also a strong, positive linear relationship between height and weight. This suggests that the two predictors may be dependent one another.
+In figure 1 we see that there is evidence of a strong, positive linear relationship between  length and the two predictor variables, height and weight. The associated correlation coefficients are 0.881 and 0.894 respectively. There is also a strong, positive, linear relationship between height and weight. This suggests that the two predictors may be dependent one another.
 
 
 #2. 
@@ -55,15 +55,22 @@ lm3<-lm(Length~Weight, data=child)
 
 The model assumptions which may be checked via diagnostic plots are as follows. 
 
-Linearity: Check the residuals vs fitted and the residuals vs predictor plots. Linearity is reasonable if random scatter above and below the 0 line is observed. 
+**Linearity:** Check the residuals vs. fitted and the residuals vs. predictor plots. The assumption of linearity is reasonable if random scatter above and below the 0 line is observed. 
 
-Constant Variance: Check scale location plot. Homoscedacity is reasonable if constant variance of residuals is observed across the scale location plot. 
+**Constant Variance:** Check scale-location plot. The assumption of constant variance is reasonable if constant variance of residuals is observed across the scale location plot. 
 
-Normality: Check normal quantile-quantile plot. Normality is reasonable if most points between -2 and 2 are on/close to the diagonal line. 
+**Normality:** Check normal quantile-quantile plot. The assumption of normality is reasonable if most points between -2 and 2 are on or close to the diagonal line.
+
+**Leverage:** Check the residuals vs. leverage plot. The assumption that there are no points of high leverage is reasonable if there are no points beyond Cook's distance, that is, no highly influential points in the dataset.
 
 #4. 
 
+
+Here we check the regression assumptions for each of the three models.
+
 #Full model (lm1)
+
+The assumption checking plots for the full model are given in figures 2 and 3:
 
 ```{r, echo = F, fig.cap = "Residuals plots for Full Model"}
 par(mfrow=c(2,2))
@@ -83,16 +90,18 @@ abline(0,0,col="red")
 
 From figures 2 and 3 we can make the following assessments:
 
-**Linearity:** Given the small number of data points available, roughly random scatter is observed in the residual vs fitted and residual vs predictor plots. There is a couple of high residual points but it is not too bad. Linearity is reasonable. 
+**Linearity:** Given the small number of data points available, roughly random scatter is observed in the residual vs. fitted and residual vs predictor plots. There are a couple of high residual points but it is not too bad. Linearity is reasonable. 
 
-**Constant variance:** Scale location plots appear to show heteroscedacity. Constant variance is not reasonable.  
+**Constant variance:** Scale location plots appear to show heteroscedasticity. Constant variance is not reasonable.  
 
 **Normality:** There is some minor departure from normality in the beginning and the tails of the standardized residuals. Overall the points are fairly close to the diagonal line. Normality is reasonable. 
 
-**Leverage:** There are 2 data points in the zone of danger. These high leverage points are having a disproportionate effect on the model. 
+**Leverage:** There are 2 data points beyond Cook's Distance. These high leverage points are having a disproportionate effect on the model. 
 
 
 #Height Model (lm2)
+
+The assumption checking plots for the height model are given in figures 2 and 3:
 
 ```{r, echo = F, fig.cap = "Residuals plots for Height Model"}
 par(mfrow=c(2,2))
@@ -111,7 +120,7 @@ abline(0,0,col="red")
 
 From figures 4 and 5 we can make the following assessments:
 
-**Linearity:** Non-random scatter observed in residual vs fitted and residual vs predictor plots. Linearity is not reasonable. 
+**Linearity:** Non-random scatter observed in residual vs. fitted and residual vs. predictor plots. Linearity is not reasonable. 
 
 **Constant Variance:** Variance appears to increase for the middle fitted values and then decrease again. Constant variance is not reasonable. 
 
@@ -121,6 +130,8 @@ From figures 4 and 5 we can make the following assessments:
 
 
 #Weight Model (lm3)
+
+The assumption checking plots for the weight model are given in figures 2 and 3:
 
 ```{r, echo = F, fig.cap = "Residuals plots for Weight Model"}
 par(mfrow=c(2,2))
@@ -138,11 +149,11 @@ abline(0,0,col="red")
 
 ```
 
-From figure 6 and 7 we can make the following assessments:
+From figures 6 and 7 we can make the following assessments:
 
-**Linearity:** Rough random scatter in observed in residual vs fitted and residual vs predictor plots. The fitted plot shows some evidence of curvature but overall it is acceptable. Linearity is reasonable. 
+**Linearity:** Rough random scatter is observed in residual vs. fitted and residual vs. predictor plots. The fitted plot shows some evidence of curvature but overall it is acceptable. Linearity is reasonable. 
 
-**Constant Variance:** Variance is roughly constant across the scale location plot. Constant variance is reasonable. 
+**Constant Variance:** Variance is roughly constant across the scale-location plot. Constant variance is reasonable. 
 
 **Normality:** Most points are close to the diagonal line except 2. Normality is reasonable. 
 
@@ -181,17 +192,17 @@ summary(lm3)
 
 ###(a)
 
-In the full model, neither predictor variables is statistically significant (at the 0.05 level), and the numerical values of the two coefficients are both smaller than those of the single predictor models.
+In the full model, neither of the predictor variables are statistically significant (at the 5% significance level), and the numerical values of the two coefficients are both smaller than those of the single predictor models.
 
 ###(b)
 
 **Full model:**
 
-Holding height constant, the full model predicts that an increase of of 1kg will on average increase the length of the cathetar by 0.42081cm. 
+Holding height constant, the full model predicts that an increase of of 1kg will on average increase the length of the catheter by 0.42081cm. 
 
 **Weight only model:**
 
-Without regard for height, this model predicts that an increase of 1kg will on average increase the cathetar length by 0.61136cm. 
+Without regard for height, this model predicts that an increase of 1kg will on average increase the catheter length by 0.61136cm. 
 
 \newpage
 
